@@ -2,7 +2,8 @@ import * as React from 'react';
 import './App.css';
 
 import logo from './logo.svg';
-import Server from './ServerView';
+import { serverInfos2 } from './model/MockData';
+import { ServerInfo } from './model/ServerInfo';
 import ServerView from './ServerView';
 
 // react with canvas
@@ -10,6 +11,7 @@ import ServerView from './ServerView';
 
 class App extends React.Component {
   public render() {
+    const serverInfos = serverInfos2;
     return (
       <div className="App">
         <header className="App-header">
@@ -20,10 +22,16 @@ class App extends React.Component {
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
         <p className="App-main">
-          <ServerView/>
+          {this.renderServerViews(serverInfos)}
         </p>
       </div>
     );
+  }
+  
+  private renderServerViews = (serverInfos: ServerInfo[]) => {
+    return serverInfos.map((si) => (
+      <ServerView serverInfo={si}/>
+    ));
   }
 }
 
