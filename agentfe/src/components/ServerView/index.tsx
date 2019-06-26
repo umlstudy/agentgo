@@ -2,18 +2,19 @@ import * as React from 'react';
 import { ServerInfo } from '../../model/ServerInfo';
 import ResourceStatusView from '../ResourceStatusView';
 
-interface IProps {
-  serverInfo: ServerInfo;
-  // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+// interface IProps {
+//   serverInfo: ServerInfo;
+//   key:any;
+//   // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+// }
 
-const ServerView = (props: IProps) => {
+const renderResourceStatusView = (si: ServerInfo) => {
+  return si.resourceStatuses.map((rs, idx) => (
+    <ResourceStatusView resourceStatus={rs} key={idx} />
+  ));
+};
 
-  const renderResourceStatusView = (si: ServerInfo) => {
-    return si.resourceStatuses.map((rs) => (
-      <ResourceStatusView resourceStatus={rs}/>
-    ));
-  }
+const ServerView = (props: any) => {
 
   const serverInfo = props.serverInfo;
   return (
