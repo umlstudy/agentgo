@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResourceStatus } from './model/ResourceStatus';
+import { ResourceStatus } from '../../model/ResourceStatus';
 
 interface IProps {
   resourceStatus: ResourceStatus;

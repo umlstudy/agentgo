@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ServerInfo } from './model/ServerInfo';
-import ResourceStatusView from './ResourceStatusView';
+import { ServerInfo } from '../../model/ServerInfo';
+import ResourceStatusView from '../ResourceStatusView';
 
 interface IProps {
   serverInfo: ServerInfo;

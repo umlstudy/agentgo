@@ -1,10 +1,10 @@
 import * as React from 'react';
 import './App.css';
 
+import ServerView from './components/ServerView';
 import logo from './logo.svg';
 import { serverInfos2 } from './model/MockData';
 import { ServerInfo } from './model/ServerInfo';
-import ServerView from './ServerView';
 
 // react with canvas
 // https://lavrton.com/using-react-with-html5-canvas-871d07d8d753/
