@@ -1,5 +1,7 @@
 import { createAction, handleActions } from 'redux-actions';
 
+export const hello = 'aaaaaaaaaaaaaabbbbbb';
+
 // 액션 타입을 정의해줍니다.
 const INCREMENT = 'counter/INCREMENT';
 const DECREMENT = 'counter/DECREMENT';

@@ -10,7 +10,11 @@ import { ServerInfo } from './model/ServerInfo';
 // https://lavrton.com/using-react-with-html5-canvas-871d07d8d753/
 
 class App extends React.Component {
+    
     public render() {
+        const prop = (this as any).props;
+        console.log(prop.hello);
+        // prop.increment();
         const serverInfos = serverInfos2;
         return (
             <div className="App">
