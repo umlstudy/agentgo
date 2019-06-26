@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import * as counter from '../../store/modules/counter'
+import { actionCreators as counter } from '../../store/modules/counter'
 import ServerView from './presenter'
 
 const mapStateToProps = (state: any) => {
