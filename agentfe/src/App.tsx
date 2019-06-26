@@ -6,11 +6,8 @@ import logo from './logo.svg';
 import { serverInfos2 } from './model/MockData';
 import { ServerInfo } from './model/ServerInfo';
 
-// react with canvas
-// https://lavrton.com/using-react-with-html5-canvas-871d07d8d753/
+class App extends React.Component<any, any> {
 
-class App extends React.Component {
-    
     public render() {
         const prop = (this as any).props;
         console.log(prop.hello);
@@ -24,7 +21,7 @@ class App extends React.Component {
                 </header>
                 <p className="App-intro">
                     To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
+                </p>
                 <div className="App-main">
                     {this.renderServerViews(serverInfos)}
                 </div>
@@ -33,11 +30,6 @@ class App extends React.Component {
     }
 
     private renderServerViews = (serverInfos: ServerInfo[]) => {
-        serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
-            // tslint:disable-next-line:no-console
-            console.log(index)
-        ));
-
         return serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
             <ServerView serverInfo={value} key={index} keyValue={index} />
         ));

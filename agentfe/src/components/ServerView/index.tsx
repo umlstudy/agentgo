@@ -1,28 +1,18 @@
-import * as React from 'react';
-import { ServerInfo } from '../../model/ServerInfo';
-import ResourceStatusView from '../ResourceStatusView';
+import { connect } from 'react-redux';
+import * as counter from '../../store/modules/counter'
+import ServerView from './presenter'
 
-// interface IProps {
-//   serverInfo: ServerInfo;
-//   key:any;
-//   // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-// }
-
-const renderResourceStatusView = (si: ServerInfo) => {
-  return si.resourceStatuses.map((rs, idx) => (
-    <ResourceStatusView resourceStatus={rs} key={idx} />
-  ));
+const mapStateToProps = (state: any) => {
+    return {
+        num: state.counter.num,
+    };
 };
 
-const ServerView = (props: any) => {
-
-  const serverInfo = props.serverInfo;
-  return (
-    <div className="ServerView">
-      Server Name - {serverInfo.name}<br />
-      {renderResourceStatusView(serverInfo)}
-    </div>
-  );
+const mapDispatchProps = (dispatch: any) => {
+    return {
+        handleDecrement: () => { dispatch(counter.decrement()) },
+        handleIncrement: () => { dispatch(counter.increment()) },
+    };
 };
 
-export default ServerView;
+export default connect(mapStateToProps, mapDispatchProps)(ServerView);

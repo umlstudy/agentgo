@@ -12,7 +12,7 @@ export const decrement = createAction(DECREMENT);
 
 // 모듈의 초기 상태를 정의합니다.
 const initialState = {
-    num: 0
+    num: 92
 };
 
 // handleActions 의 첫번째 파라미터는 액션을 처리하는 함수들로 이뤄진 객체이고
