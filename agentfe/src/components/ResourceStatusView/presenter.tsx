@@ -45,6 +45,7 @@ class ResourceStatusView extends React.Component<any, any> {
             tick = this.props.tick%10*2;
         }
         const ctx = this.canvas.getContext('2d');
+        ctx.globalAlpha = 1;
         ctx.fillStyle = "#FF0000";
         ctx.clearRect(0, 0, 800, 300);
         rect({ ctx, x: 0, y: 0, width: 800, height: 300 });
@@ -72,14 +73,22 @@ class ResourceStatusView extends React.Component<any, any> {
         if ( valLen > 0 ) {
             ctx.beginPath();
             ctx.strokeStyle = "#00ffff";
-            ctx.moveTo(700, 300 - values[values.length-1]*3);
+            ctx.moveTo(800, 300 - values[values.length-1]*3);
             for ( let i=2; i<=values.length; i++ ) {
-                const x = 700 - ((i-1) * 5);
+                const x = 800 - ((i-1) * 5);
                 const y = 300 - (values[values.length-i]*3);
                 ctx.lineTo(x, y);
-                ctx.moveTo(x, y)
             }
+            ctx.lineTo(800,300);
+            ctx.lineTo(800, 300 - values[values.length-1]*3);
+
+            ctx.closePath();
             ctx.stroke();
+
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle="#8ED6FF";
+            // ctx.fillStyle= "rgba(77, 99, aa, 0.5)";
+            ctx.fill();
         }
         
     }

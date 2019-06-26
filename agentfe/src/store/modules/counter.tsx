@@ -62,6 +62,9 @@ function applyTick(state:any, action:any) {
     };
     newState.serverInfos.map((si:ServerInfo)=>{
         si.resourceStatuses.map((rs:ResourceStatus)=>{
+            if ( (rs.values as any).length === 0 ) {
+                (rs.values as any).push(0);
+            }
             (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
         });
     });
