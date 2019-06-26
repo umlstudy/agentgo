@@ -1,4 +1,7 @@
 import { createAction, handleActions } from 'redux-actions';
+import { ResourceStatus } from 'src/model/ResourceStatus';
+import { ServerInfo } from 'src/model/ServerInfo';
+import ArrayUtil from '../../common/util/ArrayUtil'
 
 // 1.Actions
 const INCREMENT = 'counter/INCREMENT';
@@ -16,7 +19,19 @@ const initialState = {
     num: 92,
 // tslint:disable-next-line: object-literal-sort-keys
     isRunning:false,
-    tick : 0
+    tick : 0,
+    serverInfos:[
+        {
+            name:"aaaa",
+            resourceStatuses: [
+                { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(50)} as ResourceStatus,
+                { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(50)} as ResourceStatus,
+                { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(50)} as ResourceStatus,
+                { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(50)} as ResourceStatus,
+                { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(50)} as ResourceStatus,
+            ]
+        },
+    ]
 };
 
 const reducer= handleActions({
@@ -41,10 +56,16 @@ function applyDecrement(state:any, action:any) {
 }
 
 function applyTick(state:any, action:any) {
-    return {
+    const newState = {
         ...state, 
         tick : state.tick + 1
-    }
+    };
+    newState.serverInfos.map((si:ServerInfo)=>{
+        si.resourceStatuses.map((rs:ResourceStatus)=>{
+            (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
+        });
+    });
+    return newState;
 }
 
 // Export Action Creators

@@ -6,6 +6,7 @@ import SystemStausView from './presenter'
 const mapStateToProps = (state: any) => {
     return {
         isRunning: state.counter.isRunning,
+        serverInfos: state.counter.serverInfos
     };
 };
 

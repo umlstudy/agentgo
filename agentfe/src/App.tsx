@@ -3,7 +3,6 @@ import './App.css';
 
 import SystemStausView from './components/SystemStatusView';
 import logo from './logo.svg';
-import { serverInfos2 } from './model/MockData';
 
 class App extends React.Component<any, any> {
 
@@ -11,7 +10,6 @@ class App extends React.Component<any, any> {
         const prop = (this as any).props;
         console.log(prop.hello);
         // prop.increment();
-        const serverInfos = serverInfos2;
         return (
             <div className="App">
                 <header className="App-header">
@@ -21,7 +19,7 @@ class App extends React.Component<any, any> {
                 <p className="App-intro">
                     To get started, edit <code>src/App.tsx</code> and save to reload.
                 </p>
-                <SystemStausView serverInfos={serverInfos}/>
+                <SystemStausView/>
             </div>
         );
     }

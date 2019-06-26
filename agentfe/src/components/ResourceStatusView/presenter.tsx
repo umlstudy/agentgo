@@ -14,7 +14,6 @@ function rect(props: any) {
 class ResourceStatusView extends React.Component<any, any> {
 
     private canvas: any;
-    private values: number[];
 
     public shouldComponentUpdate(nextProps: any, nextState: any) {
         return this.props.tick !== nextProps.tick;
@@ -22,14 +21,13 @@ class ResourceStatusView extends React.Component<any, any> {
 
     public render() {
         const resourceStatus = (this.props as any).resourceStatus as ResourceStatus;
-        this.values = resourceStatus.values;
         return (
             <div className="ResourceStatus">
                 Resource Name - {resourceStatus.name}<br />
                 <canvas
                     ref={(canvas) => { this.canvas = canvas; }}
                     width={800}
-                    height={100} />
+                    height={300} />
             </div>
         );
     }
@@ -51,7 +49,7 @@ class ResourceStatusView extends React.Component<any, any> {
         ctx.clearRect(0, 0, 800, 300);
         rect({ ctx, x: 0, y: 0, width: 800, height: 300 });
         // draw children “components”
-        ctx.fillStyle = "#000000";
+        ctx.strokeStyle = "#000000";
         ctx.beginPath();
         for (let x=0-tick;x<800;x+=20) {
             if ( x>=0 ) {
@@ -59,17 +57,31 @@ class ResourceStatusView extends React.Component<any, any> {
                 ctx.lineTo(x, 300);
             }
         }
+        ctx.stroke();
+
+        ctx.beginPath();
         for (let y=0;y<300;y+=20) {
             ctx.moveTo(0, y);
             ctx.lineTo(800, y);
         }
         ctx.stroke();
         
-        this.values.map((val) => {
-            // tslint:disable-next-line:no-console
-            console.log(val);
+        const resourceStatus = (this.props as any).resourceStatus as ResourceStatus;
+        const values = resourceStatus.values.slice();
+        const valLen = values.length;
+        if ( valLen > 0 ) {
+            ctx.beginPath();
+            ctx.strokeStyle = "#00ffff";
+            ctx.moveTo(700, 300 - values[values.length-1]*3);
+            for ( let i=2; i<=values.length; i++ ) {
+                const x = 700 - ((i-1) * 5);
+                const y = 300 - (values[values.length-i]*3);
+                ctx.lineTo(x, y);
+                ctx.moveTo(x, y)
+            }
+            ctx.stroke();
         }
-        );
+        
     }
 }
 
