@@ -53,6 +53,7 @@ class ResourceStatusView extends React.Component<IProps, {}> {
         // draw children “components”
         rect({ ctx, x: 10, y: 10, width: 550, height: 50 });
         rect({ ctx, x: 110, y: 30, width: 50, height: 50 });
+        
         this.values.map((val) => {
             // tslint:disable-next-line:no-console
             console.log(val);
