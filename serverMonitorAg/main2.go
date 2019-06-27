@@ -17,23 +17,13 @@ import (
 //import myTypes "github.com/shirou/gopsutil/disk/UsageStat"
 
 var (
-	modkernel32 = syscall.NewLazyDLL("kernel32.dll")
-
+	modkernel32          = syscall.NewLazyDLL("kernel32.dll")
 	procGetLogicalDrives = modkernel32.NewProc("GetLogicalDrives")
 )
 
 func GetLogicalDrives() uint32 {
 	ret, _, _ := procGetLogicalDrives.Call()
-
 	return uint32(ret)
-}
-
-func dealwithErr2(err error) {
-	if err != nil {
-		fmt.Println(err)
-		//os.Exit(-1)
-		panic(err)
-	}
 }
 
 // https://mingrammer.com/gobyexample/
@@ -46,31 +36,48 @@ type Member struct {
 	Active bool   `json:"active"`
 }
 
-type UsageStat2 struct {
-	Path        string  `json:"path"`
-	Fstype      string  `json:"fstype"`
-	Total       uint64  `json:"total"`
-	Free        uint64  `json:"free"`
-	Used        uint64  `json:"used"`
-	UsedPercent float64 `json:"usedPercent"`
+// type UsageStat2 struct {
+// 	Path        string  `json:"path"`
+// 	Fstype      string  `json:"fstype"`
+// 	Total       uint64  `json:"total"`
+// 	Free        uint64  `json:"free"`
+// 	Used        uint64  `json:"used"`
+// 	UsedPercent float64 `json:"usedPercent"`
+// }
+
+type ResourceStatus struct {
+	Id    string `json:"id"`
+	Min   uint32 `json:"min"`
+	Max   uint32 `json:"max"`
+	Name  string `json:"name"`
+	Value uint32 `json:"value"`
+}
+type ServerInfo struct {
+	Id               string           `json:"id"`
+	Name             string           `json:"name"`
+	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
 }
 
-func convertToUsageStat2(us *disk.UsageStat) *UsageStat2 {
-	us2 := &UsageStat2{
-		Path:        us.Path,
-		Total:       uint64(us.Total / 1024 / 1024 / 1024),
-		Free:        uint64(us.Free / 1024 / 1024 / 1024),
-		Used:        uint64(us.Used / 1024 / 1024 / 1024),
-		UsedPercent: us.UsedPercent,
-	}
-	return us2
+func convertToResourceStatus(us *disk.UsageStat, id string) ResourceStatus {
+	// Path:        us.Path,
+	// Total:       uint64(us.Total / 1024 / 1024 / 1024),
+	// Free:        uint64(us.Free / 1024 / 1024 / 1024),
+	// Used:        uint64(us.Used / 1024 / 1024 / 1024),
+	// UsedPercent: us.UsedPercent,
+	var val = uint32(us.UsedPercent)
+	rs := ResourceStatus{
+		Id:    id,
+		Name:  us.Path,
+		Min:   0,
+		Max:   100,
+		Value: val}
+	return rs
 }
 
-func Send(us *UsageStat2) {
-	url := "https://restapi3.docs.apiary.io/notes"
-	fmt.Println("URL:>", url)
+const url string = "http://localhost:8080/recvServerInfo"
 
-	jsonBytes, err := json.Marshal(us)
+func Send(si ServerInfo) bool {
+	jsonBytes, err := json.Marshal(si)
 	if err != nil {
 		panic(err)
 	}
@@ -87,14 +94,19 @@ func Send(us *UsageStat2) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return true
+	} else {
+		return false
+	}
+	// respStatCode, err := strconv.Atoi(resp.StatusCode)
+	// fmt.Println("response Status:", resp.Status)
+	// fmt.Println("response Headers:", resp.Header)
+	// body, _ := ioutil.ReadAll(resp.Body)
+	// fmt.Println("response Body:", string(body))
 }
 
-func main() {
-
+func getValidDriveLetters() []byte {
 	drvs := w32.GetLogicalDrives()
 
 	validDriveLetters := []byte{}
@@ -102,42 +114,44 @@ func main() {
 		mask := uint32(drvs) >> uint32(x)
 		if (1 & mask) == uint32(1) {
 			drvLetter := x + 65
-			validDriveLetters = append(validDriveLetters, byte(x+65))
-
-			diskStat, err := disk.Usage(fmt.Sprintf("%c:/", drvLetter))
-			dealwithErr2(err)
-
-			total := strconv.FormatUint(diskStat.Total/1024/1024/1024, 10)
-			used := strconv.FormatUint(diskStat.Used/1024/1024/1024, 10)
-			free := strconv.FormatUint(diskStat.Free/1024/1024/1024, 10)
-			percentDiskSpaceUsage := strconv.FormatFloat(diskStat.UsedPercent, 'f', 2, 64)
-
-			fmt.Printf("%c Drive => Total:%sG, Used:%sG, Free:%sG(%s%%)\n", drvLetter, total, used, free, percentDiskSpaceUsage)
-		} else {
+			validDriveLetters = append(validDriveLetters, byte(drvLetter))
 		}
 	}
+
+	return validDriveLetters
+}
+
+func main() {
+
+	validDriveLetters := getValidDriveLetters()
 
 	i := 0
 	for true {
 		i++
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 
+		var rss []ResourceStatus
 		for _, driveLetter := range validDriveLetters {
-			diskStat, err := disk.Usage(fmt.Sprintf("%c:/", driveLetter))
-			dealwithErr2(err)
+			driveLetterStr := fmt.Sprintf("%c:/", driveLetter)
+			diskStat, err := disk.Usage(driveLetterStr)
+			if err != nil {
+				panic(err)
+			}
 
-			diskStat2 := convertToUsageStat2(diskStat)
-			Send(diskStat2)
-
-			total := strconv.FormatUint(diskStat2.Total, 10)
-			used := strconv.FormatUint(diskStat2.Used, 10)
-			free := strconv.FormatUint(diskStat2.Free, 10)
-			percentDiskSpaceUsage := strconv.FormatFloat(diskStat.UsedPercent, 'f', 2, 64)
-
-			fmt.Printf("%c Drive => Total:%sG, Used:%sG, Free:%sG(%s%%)\n", driveLetter, total, used, free, percentDiskSpaceUsage)
+			rs := convertToResourceStatus(diskStat, driveLetterStr)
+			rss = append(rss, rs)
 		}
+		si := ServerInfo{"mysvr", "mysvr", rss}
+		isOk := Send(si)
 
-		fmt.Printf("%d\n", i)
+		if isOk {
+			fmt.Printf(".")
+		} else {
+			fmt.Printf("x")
+		}
+		if i%80 == 0 {
+			fmt.Printf("\n")
+		}
 	}
 }
 
@@ -203,7 +217,9 @@ func main2() {
 			//fmt.Printf("%c drive is on.\n", drvLetter)
 
 			diskStat, err := disk.Usage(fmt.Sprintf("%c:/", drvLetter))
-			dealwithErr2(err)
+			if err != nil {
+				panic(err)
+			}
 
 			total := strconv.FormatUint(diskStat.Total/1024/1024/1024, 10)
 			used := strconv.FormatUint(diskStat.Used/1024/1024/1024, 10)
