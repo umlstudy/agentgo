@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ContextUtil from 'src/common/ui/util/ContextUtil';
 import { ResourceStatus, VALUES_CNT } from '../../model/ResourceStatus';
+import './ResourceStatusView.css'
 
 // interface IProps {
 //     resourceStatus: ResourceStatus;
@@ -29,8 +30,8 @@ class ResourceStatusView extends React.Component<any, any> {
     public render() {
         const resourceStatus = (this.props as any).resourceStatus as ResourceStatus;
         return (
-            <div className="ResourceStatus">
-                Resource Name - {resourceStatus.name}<br />
+            <div className="ResourceStatusView">
+                {resourceStatus.name}<br />
                 <canvas
                     ref={(canvas) => { this.canvas = canvas; }}
                     width={WIDHT}

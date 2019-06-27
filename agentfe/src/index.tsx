@@ -9,7 +9,6 @@ import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
     <Provider store={store}>
-        <div>abcde {(store as any).hello} bbb</div>
         <App />
     </Provider>
   ,

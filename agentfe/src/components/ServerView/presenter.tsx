@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ServerInfo } from '../../model/ServerInfo';
 import ResourceStatusView from '../ResourceStatusView';
+import './ServerView.css';
 
 const renderResourceStatusView = (si: ServerInfo) => {
     return si.resourceStatuses.map((rs, idx) => (
@@ -15,7 +16,9 @@ const ServerView = (props: any) => {
     console.log(st);
     return (
         <div className="ServerView">
-            Server Name - {serverInfo.name} {props.num}<br />
+            <div className="ServerName">
+                {serverInfo.name}
+            </div>
             {renderResourceStatusView(serverInfo)}
         </div>
     );
