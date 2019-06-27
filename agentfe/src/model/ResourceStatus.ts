@@ -1,5 +1,7 @@
+export const VALUES_CNT:number = 50;
+
 export class ResourceStatus {
-    
+
     public min: number;
     public max: number;
     public name: string;
