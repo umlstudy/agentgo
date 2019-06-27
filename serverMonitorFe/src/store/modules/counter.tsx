@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { createAction, handleActions } from 'redux-actions';
 import { ResourceStatus, VALUES_CNT } from 'src/model/ResourceStatus';
 import { ServerInfo } from 'src/model/ServerInfo';
@@ -7,11 +8,14 @@ import ArrayUtil from '../../common/util/ArrayUtil'
 const INCREMENT = 'counter/INCREMENT';
 const DECREMENT = 'counter/DECREMENT';
 const TICK = 'counter/TICK';
+const REQUEST = 'counter/REQUEST';
+
 
 // 2.Action Creators
 const increment = createAction(INCREMENT);
 const decrement = createAction(DECREMENT);
 const tick = createAction(TICK);
+const request = createAction(REQUEST);
 
 // 3.Reducer
 // 3.1.  Ininial State
@@ -37,7 +41,8 @@ const initialState = {
 const reducer= handleActions({
     [INCREMENT]:applyIncrement,
     [DECREMENT]:applyDecrement,
-    [TICK]:applyTick
+    [TICK]:applyTick,
+    [REQUEST]:applyRequest
 }, initialState);
  
 // 4.Reducer Functions
@@ -68,14 +73,38 @@ function applyTick(state:any, action:any) {
             (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
         });
     });
+
     return newState;
+}
+
+function replaceServerInfos(serverInfos: ServerInfo[], si:ServerInfo):ServerInfo[] {
+    return serverInfos;
+}
+
+function applyRequest(state:any, action:any) {
+    let rslt = null;
+    axios.get('http://localhost:8080/getServerInfos')
+        .then((response)=>{
+            const si:ServerInfo=JSON.parse(response.data);
+            rslt = {
+                ...state, 
+                num : state.num - 1,
+                serverInfos:replaceServerInfos(state.serverInfos, si)
+            }
+        })
+        .catch(rslt = {
+            ...state, 
+            num : state.num - 1
+        });
+    return rslt;
 }
 
 // Export Action Creators
 export const actionCreators = {
     decrement,
     increment,
-    tick
+    tick,
+    request
 };
 
 // Export Reducer

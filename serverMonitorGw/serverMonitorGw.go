@@ -40,6 +40,8 @@ func SendServerInfos(w http.ResponseWriter, r *http.Request) {
 	for _, value := range serverInfoMap {
 		sis = append(sis, value)
 	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	Send(w, r, sis)
 }
 

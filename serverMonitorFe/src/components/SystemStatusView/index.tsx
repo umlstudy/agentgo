@@ -13,6 +13,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchProps = (dispatch: any) => {
     return {
         tick: () => { dispatch(counter.tick()) },
+        request: () => { dispatch(counter.request()) },
     };
 };
 

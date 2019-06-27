@@ -8,6 +8,7 @@ class SystemStausView extends React.Component<any, any> {
         if ( prevState.isRunning == null ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
+                nextProps.request();
             }, 1000);
             return {
                 ...nextProps,
