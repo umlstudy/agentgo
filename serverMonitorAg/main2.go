@@ -30,6 +30,7 @@ func GetLogicalDrives() uint32 {
 
 ///////////////////////
 
+// Member is Member
 type Member struct {
 	Name   string `json:"name"`
 	Age    int    `json:"age"`
@@ -45,15 +46,18 @@ type Member struct {
 // 	UsedPercent float64 `json:"usedPercent"`
 // }
 
+// ResourceStatus is ResourceStatus
 type ResourceStatus struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Min   uint32 `json:"min"`
 	Max   uint32 `json:"max"`
 	Name  string `json:"name"`
 	Value uint32 `json:"value"`
 }
+
+// ServerInfo is ServerInfo
 type ServerInfo struct {
-	Id               string           `json:"id"`
+	ID               string           `json:"id"`
 	Name             string           `json:"name"`
 	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
 }
@@ -66,7 +70,7 @@ func convertToResourceStatus(us *disk.UsageStat, id string) ResourceStatus {
 	// UsedPercent: us.UsedPercent,
 	var val = uint32(us.UsedPercent)
 	rs := ResourceStatus{
-		Id:    id,
+		ID:    id,
 		Name:  us.Path,
 		Min:   0,
 		Max:   100,
@@ -76,7 +80,7 @@ func convertToResourceStatus(us *disk.UsageStat, id string) ResourceStatus {
 
 const url string = "http://localhost:8080/recvServerInfo"
 
-func Send(si ServerInfo) bool {
+func send(si ServerInfo) bool {
 	jsonBytes, err := json.Marshal(si)
 	if err != nil {
 		panic(err)
@@ -142,7 +146,7 @@ func main() {
 			rss = append(rss, rs)
 		}
 		si := ServerInfo{"mysvr", "mysvr", rss}
-		isOk := Send(si)
+		isOk := send(si)
 
 		if isOk {
 			fmt.Printf(".")
