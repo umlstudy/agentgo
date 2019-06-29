@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { createAction, handleActions } from 'redux-actions';
 import { ResourceStatus, VALUES_CNT } from 'src/model/ResourceStatus';
-import { ServerInfo } from 'src/model/ServerInfo';
+import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
+import { StoreObject } from 'src/model/StoreObject';
 import ArrayUtil from '../../common/util/ArrayUtil'
 
 // 1.Actions
@@ -19,13 +20,14 @@ const request = createAction(REQUEST);
 
 // 3.Reducer
 // 3.1.  Ininial State
-const initialState = {
+const initialState:StoreObject = {
     num: 92,
 // tslint:disable-next-line: object-literal-sort-keys
     isRunning:false,
     tick : 0,
-    serverInfos:[
-        {
+    serverInfoMap:{
+        "aaaa":{
+            id:"aaaa",
             name:"aaaa",
             resourceStatuses: [
                 { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
@@ -35,7 +37,7 @@ const initialState = {
                 { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
             ]
         },
-    ]
+    }
 };
 
 const reducer= handleActions({
@@ -65,31 +67,71 @@ function applyTick(state:any, action:any) {
         ...state, 
         tick : state.tick + 1
     };
-    newState.serverInfos.map((si:ServerInfo)=>{
+    Object.keys(newState.serverInfoMap).map((key) => {
+        const si = newState.serverInfoMap[key];
         si.resourceStatuses.map((rs:ResourceStatus)=>{
             if ( (rs.values as any).length === 0 ) {
                 (rs.values as any).push(0);
             }
             (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
         });
-    });
+    })
+    // newState.serverInfos.map((si:ServerInfo)=>{
+    //     si.resourceStatuses.map((rs:ResourceStatus)=>{
+    //         if ( (rs.values as any).length === 0 ) {
+    //             (rs.values as any).push(0);
+    //         }
+    //         (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
+    //     });
+    // });
 
     return newState;
 }
 
-function replaceServerInfos(serverInfos: ServerInfo[], si:ServerInfo):ServerInfo[] {
-    return serverInfos;
+function findResourceStatus(rss:ResourceStatus[], rsId:string):ResourceStatus|null {
+    let rs:any;
+    for ( rs in rss) {
+        if ( rs.id === rsId ) {
+            return rs;
+        }
+    }
+    return null;
+}
+
+function replaceServerInfoMapElement(serverInfoMap: ServerInfoMap, si:ServerInfo):ServerInfoMap {
+    const oldSi = serverInfoMap[si.id];
+    if ( !!oldSi ) {
+        const newRss = si.resourceStatuses;
+        const oldRss = oldSi.resourceStatuses;
+
+        newRss.forEach((rs:ResourceStatus)=>{
+            const foundOldRs = findResourceStatus(oldRss, rs.id);
+            if ( !!foundOldRs ) {
+                foundOldRs.value = rs.value;
+            } else {
+                rs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
+                oldRss.push(rs);
+            }
+        });
+    } else {
+        serverInfoMap[si.id] = si;
+        const newRss = si.resourceStatuses;
+        newRss.forEach((rs:ResourceStatus)=>{
+            rs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
+        });
+    }
+    return serverInfoMap;
 }
 
 function applyRequest(state:any, action:any) {
     let rslt = null;
     axios.get('http://localhost:8080/getServerInfos')
         .then((response)=>{
-            const si:ServerInfo=JSON.parse(response.data);
+            const si:ServerInfo=response.data[0];
             rslt = {
                 ...state, 
                 num : state.num - 1,
-                serverInfos:replaceServerInfos(state.serverInfos, si)
+                serverInfoMap:replaceServerInfoMapElement(state.serverInfoMap, si)
             }
         })
         .catch(rslt = {

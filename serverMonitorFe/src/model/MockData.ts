@@ -1,8 +1,9 @@
 import { ResourceStatus } from './ResourceStatus';
-import { ServerInfo } from "./ServerInfo";
+import { ServerInfoMap } from "./ServerInfo";
 
-export const serverInfos2:ServerInfo[] = [
-    {
+export const serverInfoMap:ServerInfoMap = {
+    "aaaa":{
+        id:"aaaa",
         name:"aaaa",
         resourceStatuses: [
             { max:100, min:1, name:"cpu", value:41} as ResourceStatus,
@@ -12,4 +13,4 @@ export const serverInfos2:ServerInfo[] = [
             { max:100, min:1, name:"Disk3", value:41} as ResourceStatus,
         ]
     },
-];
+};

@@ -1,12 +1,13 @@
 export const VALUES_CNT:number = 50;
 
-export class ResourceStatus {
-
-    public min: number;
-    public max: number;
-    public name: string;
-    public value: number;
-    public values: number[];
+// tslint:disable-next-line:interface-name
+export interface ResourceStatus {
+    id: string;
+    min: number;
+    max: number;
+    name: string;
+    value: number;
+    values: number[];
 }
 
 // const d = { min:1, max:1, name:"1", value:1} as ResourceStatus;

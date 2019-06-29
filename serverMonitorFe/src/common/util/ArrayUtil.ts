@@ -10,4 +10,13 @@ export default class ArrayUtil {
         }
         return arr;
     }
+
+    public static json2Array<T>(json:any):T[]{
+        const result = new Array<T>();
+        const keys = Object.keys(json);
+        keys.forEach((key)=>{
+            result.push(json[key]);
+        });
+        return result;
+    }
 }
