@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { createAction, handleActions } from 'redux-actions';
 import { ResourceStatus, VALUES_CNT } from 'src/model/ResourceStatus';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
@@ -16,7 +15,7 @@ const REQUEST = 'counter/REQUEST';
 const increment = createAction(INCREMENT);
 const decrement = createAction(DECREMENT);
 const tick = createAction(TICK);
-const request = createAction(REQUEST);
+const request = createAction(REQUEST, (si:ServerInfo)=>si);
 
 // 3.Reducer
 // 3.1.  Ininial State
@@ -37,7 +36,8 @@ const initialState:StoreObject = {
                 { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
             ]
         },
-    }
+    },
+    serverInfoMapUpdateCnt:0
 };
 
 const reducer= handleActions({
@@ -73,7 +73,11 @@ function applyTick(state:any, action:any) {
             if ( (rs.values as any).length === 0 ) {
                 (rs.values as any).push(0);
             }
-            (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
+            if( key === 'aaaa') {
+                (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
+            } else {
+                (rs.values as any).push(rs.value);
+            }
         });
     })
     // newState.serverInfos.map((si:ServerInfo)=>{
@@ -89,10 +93,10 @@ function applyTick(state:any, action:any) {
 }
 
 function findResourceStatus(rss:ResourceStatus[], rsId:string):ResourceStatus|null {
-    let rs:any;
-    for ( rs in rss) {
-        if ( rs.id === rsId ) {
-            return rs;
+    let idx:any;
+    for ( idx in rss) {
+        if ( rss[idx].id === rsId ) {
+            return rss[idx];
         }
     }
     return null;
@@ -101,16 +105,16 @@ function findResourceStatus(rss:ResourceStatus[], rsId:string):ResourceStatus|nu
 function replaceServerInfoMapElement(serverInfoMap: ServerInfoMap, si:ServerInfo):ServerInfoMap {
     const oldSi = serverInfoMap[si.id];
     if ( !!oldSi ) {
-        const newRss = si.resourceStatuses;
+        const fromSvrRss = si.resourceStatuses;
         const oldRss = oldSi.resourceStatuses;
 
-        newRss.forEach((rs:ResourceStatus)=>{
-            const foundOldRs = findResourceStatus(oldRss, rs.id);
+        fromSvrRss.forEach((fromSvrRs:ResourceStatus)=>{
+            const foundOldRs = findResourceStatus(oldRss, fromSvrRs.id);
             if ( !!foundOldRs ) {
-                foundOldRs.value = rs.value;
+                foundOldRs.value = fromSvrRs.value;
             } else {
-                rs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
-                oldRss.push(rs);
+                fromSvrRs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
+                oldRss.push(fromSvrRs);
             }
         });
     } else {
@@ -124,21 +128,12 @@ function replaceServerInfoMapElement(serverInfoMap: ServerInfoMap, si:ServerInfo
 }
 
 function applyRequest(state:any, action:any) {
-    let rslt = null;
-    axios.get('http://localhost:8080/getServerInfos')
-        .then((response)=>{
-            const si:ServerInfo=response.data[0];
-            rslt = {
-                ...state, 
-                num : state.num - 1,
-                serverInfoMap:replaceServerInfoMapElement(state.serverInfoMap, si)
-            }
-        })
-        .catch(rslt = {
-            ...state, 
-            num : state.num - 1
-        });
-    return rslt;
+    return {
+        ...state, 
+        num : state.num - 1,
+        serverInfoMap:replaceServerInfoMapElement(state.serverInfoMap, action.payload),
+        serverInfoMapUpdateCnt:state.serverInfoMapUpdateCnt+1
+    }
 }
 
 // Export Action Creators

@@ -1,6 +1,7 @@
+import Axios from 'axios';
 import * as React from 'react';
 import ArrayUtil from 'src/common/util/ArrayUtil';
-import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
+import { ServerInfo } from 'src/model/ServerInfo';
 import { StoreObject } from 'src/model/StoreObject';
 import ServerView from '../ServerView/presenter';
 
@@ -10,7 +11,7 @@ class SystemStausView extends React.Component<any, any> {
         if ( prevState.isRunning == null ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
-                nextProps.request();
+                SystemStausView.requestDateFromServer(nextProps);
             }, 1000);
             return {
                 ...nextProps,
@@ -22,6 +23,25 @@ class SystemStausView extends React.Component<any, any> {
         return null;
     }
 
+    private static requestDateFromServer = (nextProps: any) => {
+        Axios.get('http://localhost:8080/getServerInfos')
+        .then((response)=>{
+            const si:ServerInfo=response.data[0];
+            nextProps.request(si);
+            // rslt = {
+            //     ...state, 
+            //     num : state.num - 1,
+            //     serverInfoMap:replaceServerInfoMapElement(state.serverInfoMap, si),
+            //     serverInfoMapUpdateCnt:state.serverInfoMapUpdateCnt+1
+            // }
+        });
+        // .catch(
+        //     // rslt = {
+        //     // ...state, 
+        //     // num : state.num - 1
+        // });
+    }
+
     public state:any = {
         isRunning:null
     }
@@ -30,10 +50,10 @@ class SystemStausView extends React.Component<any, any> {
         if (this.props.isRunning !== prevProps.isRunning ) {
             return true;
         } 
-        const changed = this.isChanged(this.props.serverInfoMap, prevProps.serverInfoMap );
-        if ( changed ) {
-            return true;
-        }
+        // const changed = this.isChanged(this.props.serverInfoMap, prevProps.serverInfoMap );
+        // if ( changed ) {
+        //     return true;
+        // }
         return false;
     }
 
@@ -42,7 +62,7 @@ class SystemStausView extends React.Component<any, any> {
     }
 
     public shouldComponentUpdate(nextProps: any, nextState: any) {
-        return this.props.tick !== nextProps.tick;
+        return this.props.serverInfoMapUpdateCnt !== nextProps.serverInfoMapUpdateCnt;
     }
 
     public render() {
@@ -62,43 +82,43 @@ class SystemStausView extends React.Component<any, any> {
         ));
     }
 
-    private findServerInfo(sis:ServerInfo[], siId:string):ServerInfo|null {
-        // tslint:disable-next-line:prefer-for-of
-        for ( let i=0;i<sis.length;i++ ) {
-            const si = sis[i];
-            if ( si.id === siId ) {
-                return si;
-            }
-        }
-        return null;
-    }
+    // private findServerInfo(sis:ServerInfo[], siId:string):ServerInfo|null {
+    //     // tslint:disable-next-line:prefer-for-of
+    //     for ( let i=0;i<sis.length;i++ ) {
+    //         const si = sis[i];
+    //         if ( si.id === siId ) {
+    //             return si;
+    //         }
+    //     }
+    //     return null;
+    // }
     
-    private isChanged(a:ServerInfoMap, b:ServerInfoMap):boolean {
-        const bServerInfos:ServerInfo[] = [];
-        for (const key in b){
-            if (b.hasOwnProperty(key)) {
-                bServerInfos.push(b[key])
-            }
-        }
+    // private isChanged(a:ServerInfoMap, b:ServerInfoMap):boolean {
+    //     const bServerInfos:ServerInfo[] = [];
+    //     for (const key in b){
+    //         if (b.hasOwnProperty(key)) {
+    //             bServerInfos.push(b[key])
+    //         }
+    //     }
 
-        const aServerInfos:ServerInfo[] = [];
-        for (const key in a){
-            if (a.hasOwnProperty(key)) {
-                aServerInfos.push(a[key])
-            }
-        }
+    //     const aServerInfos:ServerInfo[] = [];
+    //     for (const key in a){
+    //         if (a.hasOwnProperty(key)) {
+    //             aServerInfos.push(a[key])
+    //         }
+    //     }
 
-        if ( aServerInfos.length === bServerInfos.length ) {
-            // tslint:disable-next-line:prefer-for-of
-            for (let i=0;i<aServerInfos.length;i++ ) {
-                const found = this.findServerInfo(bServerInfos, aServerInfos[i].id);
-                if ( !found ) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    //     if ( aServerInfos.length === bServerInfos.length ) {
+    //         // tslint:disable-next-line:prefer-for-of
+    //         for (let i=0;i<aServerInfos.length;i++ ) {
+    //             const found = this.findServerInfo(bServerInfos, aServerInfos[i].id);
+    //             if ( !found ) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
 }
 
 export default SystemStausView;
