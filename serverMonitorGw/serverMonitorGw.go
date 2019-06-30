@@ -5,23 +5,15 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"sejong.asia/serverMonitor/common"
 )
 
 // ResourceStatus is ResourceStatus
-type ResourceStatus struct {
-	ID    string `json:"id"`
-	Min   uint32 `json:"min"`
-	Max   uint32 `json:"max"`
-	Name  string `json:"name"`
-	Value uint32 `json:"value"`
-}
+type ResourceStatus = common.ResourceStatus
 
 // ServerInfo is ServerInfo
-type ServerInfo struct {
-	ID               string           `json:"id"`
-	Name             string           `json:"name"`
-	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
-}
+type ServerInfo = common.ServerInfo
 
 var serverInfoMap = map[string]ServerInfo{}
 

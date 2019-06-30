@@ -12,15 +12,23 @@ import (
 
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/w32"
+	"sejong.asia/serverMonitor/common"
 )
 
-//import myTypes "github.com/shirou/gopsutil/disk/UsageStat"
+// ResourceStatus is ResourceStatus
+type ResourceStatus = common.ResourceStatus
+
+// ServerInfo is ServerInfo
+type ServerInfo = common.ServerInfo
+
+// import myTypes "github.com/shirou/gopsutil/disk/UsageStat"
 
 var (
 	modkernel32          = syscall.NewLazyDLL("kernel32.dll")
 	procGetLogicalDrives = modkernel32.NewProc("GetLogicalDrives")
 )
 
+// GetLogicalDrives is GetLogicalDrives
 func GetLogicalDrives() uint32 {
 	ret, _, _ := procGetLogicalDrives.Call()
 	return uint32(ret)
@@ -45,22 +53,6 @@ type Member struct {
 // 	Used        uint64  `json:"used"`
 // 	UsedPercent float64 `json:"usedPercent"`
 // }
-
-// ResourceStatus is ResourceStatus
-type ResourceStatus struct {
-	ID    string `json:"id"`
-	Min   uint32 `json:"min"`
-	Max   uint32 `json:"max"`
-	Name  string `json:"name"`
-	Value uint32 `json:"value"`
-}
-
-// ServerInfo is ServerInfo
-type ServerInfo struct {
-	ID               string           `json:"id"`
-	Name             string           `json:"name"`
-	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
-}
 
 func convertToResourceStatus(us *disk.UsageStat, id string) ResourceStatus {
 	// Path:        us.Path,
