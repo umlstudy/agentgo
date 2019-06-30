@@ -74,7 +74,7 @@ func createServerInfo() ServerInfo {
 		panic(err)
 	}
 	for _, ptn := range ptns {
-		diskStat, err := disk.Usage(ptn.Device)
+		diskStat, err := disk.Usage(ptn.Mountpoint)
 		if err != nil {
 			panic(err)
 		}
