@@ -24,7 +24,7 @@ class SystemStausView extends React.Component<any, any> {
     }
 
     private static requestDateFromServer = (nextProps: any) => {
-        Axios.get('http://localhost:8080/getServerInfos')
+        Axios.get('http://localhost:7007/getServerInfos')
         .then((response)=>{
             const si:ServerInfo=response.data[0];
             nextProps.request(si);
