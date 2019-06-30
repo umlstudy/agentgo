@@ -21,8 +21,6 @@ type ResourceStatus = common.ResourceStatus
 // ServerInfo is ServerInfo
 type ServerInfo = common.ServerInfo
 
-// import myTypes "github.com/shirou/gopsutil/disk/UsageStat"
-
 var (
 	modkernel32          = syscall.NewLazyDLL("kernel32.dll")
 	procGetLogicalDrives = modkernel32.NewProc("GetLogicalDrives")
@@ -33,8 +31,6 @@ func GetLogicalDrives() uint32 {
 	ret, _, _ := procGetLogicalDrives.Call()
 	return uint32(ret)
 }
-
-// https://mingrammer.com/gobyexample/
 
 ///////////////////////
 

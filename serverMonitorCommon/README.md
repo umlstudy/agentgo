@@ -2,6 +2,18 @@
 
 https://jusths.tistory.com/107
 
+# import 여러가지 방법
+import "fmt"
+or
+import f "fmt"
+or
+import . "fmt"
+or
+import "website.com/Owner/blog/app/models"
+type Category models.Category
+
+https://stackoverflow.com/questions/39491435/how-to-import-structs-from-another-package-in-go?rq=1
+
 # vscode test debug 
 
 https://stackoverflow.com/questions/43092364/debugging-go-tests-in-visual-studio-code

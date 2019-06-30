@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"runtime"
 	"strconv"
 
@@ -11,25 +10,39 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
+	"sejong.asia/serverMonitor/common"
 )
 
-func dealwithErr(err error) {
-	if err != nil {
-		fmt.Println(err)
-		//os.Exit(-1)
-	}
-}
+// ResourceStatus is ResourceStatus
+type ResourceStatus = common.ResourceStatus
 
-func GetHardwareData(w http.ResponseWriter, r *http.Request) {
+// ServerInfo is ServerInfo
+type ServerInfo = common.ServerInfo
+
+func printHardwareData2() {
 	runtimeOS := runtime.GOOS
 	// memory
 	vmStat, err := mem.VirtualMemory()
 	dealwithErr(err)
 
+	resourceStatuss := []ResourceStatus{}
+	resourceStatuss = append(resourceStatuss, ResourceStatus{"mem", 1, 100, "mem", uint32(vmStat.UsedPercent)})
+
 	// disk - start from "/" mount point for Linux
 	// might have to change for Windows!!
 	// don't have a Window to test this out, if detect OS == windows
 	// then use "\" instead of "/"
+
+	ptns, err := disk.Partitions(false)
+	dealwithErr(err)
+	for _, ptn := range ptns {
+		fmt.Printf("%s", ptn.String())
+		diskStat, err := disk.Usage(ptn.Device)
+		dealwithErr(err)
+		fmt.Printf("%s", diskStat.String())
+
+		resourceStatuss = append(resourceStatuss, ResourceStatus{diskStat.Path, 1, 100, diskStat.Path, uint32(diskStat.UsedPercent)})
+	}
 
 	diskStat, err := disk.Usage("/")
 	dealwithErr(err)
@@ -40,9 +53,21 @@ func GetHardwareData(w http.ResponseWriter, r *http.Request) {
 	percentage, err := cpu.Percent(0, true)
 	dealwithErr(err)
 
+	cpuSum := float64(0)
+	for _, per := range percentage {
+		cpuSum = cpuSum + per
+	}
+	cpuAvg := uint32(cpuSum / float64(len(percentage)))
+	resourceStatuss = append(resourceStatuss, ResourceStatus{"cpu", 1, 100, "cpu", cpuAvg})
+
 	// host or machine kernel, uptime, platform Info
 	hostStat, err := host.Info()
 	dealwithErr(err)
+
+	serverInfoMap := map[string]ServerInfo{}
+	serverInfo := ServerInfo{hostStat.Hostname, hostStat.Hostname, resourceStatuss}
+
+	serverInfoMap[serverInfo.ID] = serverInfo
 
 	// get interfaces MAC/hardware address
 	interfStat, err := net.Interfaces()
@@ -113,20 +138,14 @@ func GetHardwareData(w http.ResponseWriter, r *http.Request) {
 
 	html = html + "</html>"
 
-	w.Write([]byte(html))
+	fmt.Printf("%s", html)
+
+	// w.Write([]byte(html))
 
 }
 
-func SayName(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, I'm a machine and my name is [whatever]"))
-}
-
-func start() {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", SayName)
-	mux.HandleFunc("/gethwdata", GetHardwareData)
-
-	http.ListenAndServe(":8080", mux)
-
+func test5() {
+	fmt.Printf("test start...\n")
+	printHardwareData2()
+	fmt.Printf("test end...\n")
 }
