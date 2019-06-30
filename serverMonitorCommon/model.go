@@ -14,7 +14,7 @@ type ServerInfo struct {
 	ID               string           `json:"id"`
 	Name             string           `json:"name"`
 	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
-	ProcessStatuses  []ProcessStatus  `json:"processStatuses"`
+	// ProcessStatuses  []ProcessStatus  `json:"processStatuses"`
 }
 
 // ProcessStatus is ProcessStatus
@@ -23,3 +23,6 @@ type ProcessStatus struct {
 	Name      string `json:"name"`
 	IsRunning bool   `"json:isRunning"`
 }
+
+// DefaultServerPort is DefaultServerPort
+const DefaultServerPort = 7007

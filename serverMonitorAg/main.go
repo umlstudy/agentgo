@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"time"
@@ -20,9 +21,7 @@ type ResourceStatus = common.ResourceStatus
 // ServerInfo is ServerInfo
 type ServerInfo = common.ServerInfo
 
-const url string = "http://localhost:8080/recvServerInfo"
-
-func send(si ServerInfo) bool {
+func send(si ServerInfo, url string) bool {
 	jsonBytes, err := json.Marshal(si)
 	if err != nil {
 		panic(err)
@@ -93,7 +92,16 @@ func createServerInfo() ServerInfo {
 	return serverInfo
 }
 
+const urlFormat string = "http://%s:%d/recvServerInfo"
+
 func main() {
+
+	host := flag.String("host", "localhost", "ServerMonitory Gateway's host name or ip to gateway")
+	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
+
+	flag.Parse()
+
+	url := fmt.Sprintf(urlFormat, *host, *port)
 
 	i := 0
 	for true {
@@ -101,12 +109,12 @@ func main() {
 		time.Sleep(1 * time.Second)
 
 		si := createServerInfo()
-		isOk := send(si)
+		isOk := send(si, url)
 
 		if isOk {
 			fmt.Printf(".")
 		} else {
-			fmt.Printf("x")
+			panic(fmt.Sprintf("ServerMonitory Gateway is not running.(%s)", url))
 		}
 		if i%80 == 0 {
 			fmt.Printf("\n")

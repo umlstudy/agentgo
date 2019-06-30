@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"time"
@@ -73,19 +74,24 @@ func recvServerInfo(rw http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
+	flag.Parse()
+
 	beforeStart()
-	webServerStart()
+	webServerStart(*port)
 }
 
-func webServerStart() {
+func webServerStart(port int) {
+
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", sayName)
-	mux.HandleFunc("/getServerInfos", sendServerInfos)
-	mux.HandleFunc("/recvServerInfo", recvServerInfo)
+	mux.HandleFunc("/", sayName)                       // 살아있는지 테스트용
+	mux.HandleFunc("/getServerInfos", sendServerInfos) // 모니터UI로 자료 전송
+	mux.HandleFunc("/recvServerInfo", recvServerInfo)  // 에이전트로부터 자료 수신
 
 	t := time.Now()
-	fmt.Printf("> start %s\n", t.Format("2006-01-02 15:04:05"))
-	http.ListenAndServe(":8080", mux)
-	fmt.Printf("> end %s\n", t.Format("2006-01-02 15:04:05"))
+	fmt.Printf("> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
+	fmt.Printf(fmt.Sprintf("> Waiting for agent or front end UI... (port:%d)\n", port))
+	http.ListenAndServe(fmt.Sprintf(":%d\n", port), mux)
+	fmt.Printf("> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
 }
