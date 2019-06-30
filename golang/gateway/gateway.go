@@ -92,6 +92,9 @@ func webServerStart(port int) {
 	t := time.Now()
 	fmt.Printf("> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
 	fmt.Printf(fmt.Sprintf("> Waiting for agent or front end UI... (port:%d)\n", port))
-	http.ListenAndServe(fmt.Sprintf(":%d\n", port), mux)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
 }

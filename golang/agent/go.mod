@@ -2,7 +2,7 @@ module sejong.asia/serverMonitor/agent
 
 go 1.12
 
-replace sejong.asia/serverMonitor/common => ../serverMonitorCommon
+replace sejong.asia/serverMonitor/common => ../common
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
