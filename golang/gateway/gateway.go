@@ -10,22 +10,29 @@ import (
 	"sejong.asia/serverMonitor/common"
 )
 
-// ResourceStatus is ResourceStatus
-type ResourceStatus = common.ResourceStatus
-
 // ServerInfo is ServerInfo
 type ServerInfo = common.ServerInfo
 
-var serverInfoMap = map[string]ServerInfo{}
+// // ResourceStatus is ResourceStatus
+// type ResourceStatus = common.ResourceStatus
 
-func beforeStart() {
-	serverInfoMap["mysvr"] = ServerInfo{"mysvr", "mysvr", []ResourceStatus{
-		ResourceStatus{"cpu", 1, 100, "cpu", 1},
-		ResourceStatus{"mem", 1, 100, "memory", 1},
-		ResourceStatus{"di1", 1, 100, "disk1", 1},
-		ResourceStatus{"di2", 1, 100, "disk2", 1},
-	}}
-}
+// // ProcessStatus is ProcessStatus
+// type ProcessStatus = common.ProcessStatus
+
+// func beforeStart() {
+// 	serverInfoMap["mysvr"] = ServerInfo{"mysvr", "mysvr",
+// 		[]ResourceStatus{
+// 			ResourceStatus{"cpu", 1, 100, "cpu", 1},
+// 			ResourceStatus{"mem", 1, 100, "memory", 1},
+// 			ResourceStatus{"di1", 1, 100, "disk1", 1},
+// 			ResourceStatus{"di2", 1, 100, "disk2", 1},
+// 		},
+// 		[]ProcessStatus{
+// 			ProcessStatus{"tomcat", "tomcat", "tomcat", 1111},
+// 		}}
+// }
+
+var serverInfoMap = map[string]ServerInfo{}
 
 func sayName(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, I'm a machine and my name is [miss.lee]"))
@@ -77,7 +84,7 @@ func main() {
 	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
 	flag.Parse()
 
-	beforeStart()
+	// beforeStart()
 	webServerStart(*port)
 }
 

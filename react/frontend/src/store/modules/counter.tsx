@@ -1,4 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
+import { ProcessStatus } from 'src/model/ProcessStatus';
 import { ResourceStatus, VALUES_CNT } from 'src/model/ResourceStatus';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
 import { StoreObject } from 'src/model/StoreObject';
@@ -34,6 +35,9 @@ const initialState:StoreObject = {
                 { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
                 { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
                 { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
+            ],
+            processStatuses: [
+                { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
             ]
         },
     },

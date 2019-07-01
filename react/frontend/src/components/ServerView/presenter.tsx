@@ -9,6 +9,12 @@ const renderResourceStatusView = (si: ServerInfo) => {
     ));
 };
 
+const renderProcessStatusView = (si: ServerInfo) => {
+    return si.processStatuses.map((ps, idx) => (
+        <div>{ps.name}</div>
+    ));
+};
+
 const ServerView = (props: any) => {
     const serverInfo = props.serverInfo;
     const st = React.useState(
@@ -19,7 +25,10 @@ const ServerView = (props: any) => {
             <div className="ServerName">
                 {serverInfo.name}
             </div>
-            {renderResourceStatusView(serverInfo)}
+            <div>
+                {renderResourceStatusView(serverInfo)}
+            </div>
+            { !!serverInfo.processStatuses ? <div>{renderProcessStatusView(serverInfo)}</div>: ''}
         </div>
     );
 };
