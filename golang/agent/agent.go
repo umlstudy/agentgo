@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"time"
 
 	"sejong.asia/serverMonitor/common"
@@ -10,26 +13,54 @@ import (
 
 const urlFormat string = "http://%s:%d/recvServerInfo"
 
+type AgentProperties struct {
+	ProcNameParts []string `json:"procNameParts"`
+}
+
+func readJson(fileName string) (*AgentProperties, error) {
+
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	var ap = AgentProperties{}
+	err = json.Unmarshal([]byte(byteValue), &ap)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ap, nil
+}
+
 func main() {
 
 	host := flag.String("host", "localhost", "ServerMonitory Gateway's host name or ip to gateway")
 	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
-
 	flag.Parse()
 
-	url := fmt.Sprintf(urlFormat, *host, *port)
-
-	procNameParts := []string{"java"}
-	pss, err := common.FindMatchedPids(procNameParts)
+	ap, err := readJson("setting.json")
 	if err != nil {
-		panic(fmt.Errorf("ServerMonitory Gateway FindMatchedPids error.(%s, %s)", err, url))
+		panic(fmt.Errorf("ServerMonitory Gateway reading setting.json error.(%s)", err))
+	}
+	pss, err := common.FindMatchedPids(ap.ProcNameParts)
+	if err != nil {
+		panic(fmt.Errorf("ServerMonitory Gateway FindMatchedPids error.(%s)", err))
 	}
 
+	url := fmt.Sprintf(urlFormat, *host, *port)
 	i := 0
 	for true {
-		i++
+
 		time.Sleep(1 * time.Second)
-		si, err := common.CreateServerInfo(pss, procNameParts)
+
+		si, err := common.CreateServerInfo(pss, ap.ProcNameParts)
 		if err != nil {
 			panic(fmt.Errorf("ServerMonitory Gateway error.(%s, %s)", err, url))
 		}
@@ -38,7 +69,9 @@ func main() {
 		if err != nil {
 			panic(fmt.Errorf("ServerMonitory Gateway is not running.(%s, %s)", err, url))
 		}
+
 		fmt.Printf(".")
+		i++
 		if i%80 == 0 {
 			fmt.Printf("\n")
 		}
