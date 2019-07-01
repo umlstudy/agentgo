@@ -14,14 +14,15 @@ type ServerInfo struct {
 	ID               string           `json:"id"`
 	Name             string           `json:"name"`
 	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
-	// ProcessStatuses  []ProcessStatus  `json:"processStatuses"`
+	ProcessStatuses  []ProcessStatus  `json:"processStatuses"`
 }
 
 // ProcessStatus is ProcessStatus
 type ProcessStatus struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	IsRunning bool   `"json:isRunning"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	RealName string `json:"realName"`
+	ProcId   int32  `json:"procId"`
 }
 
 // DefaultServerPort is DefaultServerPort
