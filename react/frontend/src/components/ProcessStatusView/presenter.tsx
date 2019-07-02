@@ -4,10 +4,6 @@ import './ProcessStatusView.css';
 
 class ProcessStatusView extends React.Component<any, any> {
 
-    public shouldComponentUpdate(nextProps: any, nextState: any) {
-        return this.props.tick !== nextProps.tick;
-    }
-
     public render() {
         const processStatus = (this.props as any).processStatus as ProcessStatus;
         return (

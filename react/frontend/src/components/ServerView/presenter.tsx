@@ -18,9 +18,6 @@ const renderProcessStatusView = (si: ServerInfo) => {
 
 const ServerView = (props: any) => {
     const serverInfo = props.serverInfo;
-    const st = React.useState(
-      );
-    console.log(st);
     return (
         <div className="ServerView">
             <div className="ServerName">
