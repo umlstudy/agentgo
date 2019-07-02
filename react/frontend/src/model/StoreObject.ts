@@ -5,6 +5,6 @@ export interface StoreObject {
     num:number;
     isRunning:boolean;
     tick:number;
-    serverInfoMapUpdateCnt:number,
+    serverInfoMapModified:boolean,
     serverInfoMap:ServerInfoMap
 }

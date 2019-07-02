@@ -6,6 +6,8 @@ export const serverInfoMap:ServerInfoMap = {
     "aaaa":{
         id:"aaaa",
         name:"aaaa",
+        resourceStatusesModified:true,
+        processStatusesModified:true,
         resourceStatuses: [
             { max:100, min:1, name:"cpu", value:41} as ResourceStatus,
             { max:100, min:1, name:"Memory", value:41} as ResourceStatus,

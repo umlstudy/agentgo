@@ -8,9 +8,9 @@ class App extends React.Component<any, any> {
     public render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <h1 className="App-title">Server Monitor</h1>
-                </header>
+                <div className="App-header">
+                    <div className="App-title">Server Monitor</div>
+                </div>
                 <SystemStausView/>
             </div>
         );

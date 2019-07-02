@@ -5,6 +5,8 @@ import { ResourceStatus } from './ResourceStatus';
 export interface ServerInfo {
     id : string;
     name: string;
+    resourceStatusesModified:boolean;
+    processStatusesModified:boolean;
     resourceStatuses: ResourceStatus[];
     processStatuses: ProcessStatus[];
 }

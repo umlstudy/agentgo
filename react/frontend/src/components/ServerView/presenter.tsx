@@ -1,34 +1,22 @@
 import * as React from 'react';
-import { ServerInfo } from '../../model/ServerInfo';
-import ProcessStatusView from '../ProcessStatusView';
-import ResourceStatusView from '../ResourceStatusView';
+import ProcessStatusContainerView from '../ProcessStatusContainerView/presenter';
+import ResourceStatusContainerView from '../ResourceStatusContainerView/presenter';
 import './ServerView.css';
 
-const renderResourceStatusView = (si: ServerInfo) => {
-    return si.resourceStatuses.map((rs, idx) => (
-        <ResourceStatusView resourceStatus={rs} key={idx} />
-    ));
-};
+class ServerView extends React.Component<any, any> {
 
-const renderProcessStatusView = (si: ServerInfo) => {
-    return si.processStatuses.map((ps, idx) => (
-        <ProcessStatusView processStatus={ps} key={idx} />
-    ));
-};
-
-const ServerView = (props: any) => {
-    const serverInfo = props.serverInfo;
-    return (
-        <div className="ServerView">
-            <div className="ServerName">
-                {serverInfo.name}
+    public render() {
+        const serverInfo = this.props.serverInfo;
+        return (
+            <div className="ServerView">
+                <div className="ServerName">
+                    {serverInfo.name}
+                </div>
+                <ResourceStatusContainerView serverInfo={serverInfo}/>
+                { !!serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={serverInfo}/>: ''}
             </div>
-            <div>
-                {renderResourceStatusView(serverInfo)}
-            </div>
-            { !!serverInfo.processStatuses ? <div>{renderProcessStatusView(serverInfo)}</div>: ''}
-        </div>
-    );
+        );
+    }
 };
 
 export default ServerView;

@@ -8,7 +8,7 @@ const mapStateToProps = (state: any) => {
     return {
         isRunning: state.counter.isRunning,
         serverInfoMap: state.counter.serverInfoMap,
-        serverInfoMapUpdateCnt: state.counter.serverInfoMapUpdateCnt
+        serverInfoMapModified: state.counter.serverInfoMapModified
     };
 };
 

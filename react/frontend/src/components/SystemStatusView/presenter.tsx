@@ -9,7 +9,7 @@ import ServerView from '../ServerView/presenter';
 class SystemStausView extends React.Component<any, any> {
 
     public static getDerivedStateFromProps(nextProps: any, prevState: any) {
-        if ( prevState.isRunning == null ) {
+        if ( prevState == null ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
                 SystemStausView.requestDateFromServer(nextProps);
@@ -32,23 +32,23 @@ class SystemStausView extends React.Component<any, any> {
         });
     }
 
-    public state:any = {
-        isRunning:null
-    }
+    // public state:any = {
+    //     isRunning:null
+    // }
 
-    public getSnapshotBeforeUpdate(prevProps:any, prevState:any) {
-        if (this.props.isRunning !== prevProps.isRunning ) {
-            return true;
-        } 
-        return false;
-    }
+    // public getSnapshotBeforeUpdate(prevProps:any, prevState:any) {
+    //     if (this.props.isRunning !== prevProps.isRunning ) {
+    //         return true;
+    //     } 
+    //     return false;
+    // }
 
-    public componentDidUpdate(prevProps:any, prevState:any) {
-        return true;
-    }
+    // public componentDidUpdate(prevProps:any, prevState:any) {
+    //     return true;
+    // }
 
     public shouldComponentUpdate(nextProps: any, nextState: any) {
-        return this.props.serverInfoMapUpdateCnt !== nextProps.serverInfoMapUpdateCnt;
+        return nextState.serverInfoMapModified;
     }
 
     public render() {
