@@ -3,9 +3,10 @@ package common
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/pkg/errors"
 )
 
 func SendPostToJson(any interface{}, url string) error {
@@ -15,7 +16,7 @@ func SendPostToJson(any interface{}, url string) error {
 func sendToJson(any interface{}, url string, method string) error {
 	jsonBytes, err := json.Marshal(any)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "sendToJson")
 	}
 
 	// JSON 바이트를 문자열로 변경
@@ -25,7 +26,7 @@ func sendToJson(any interface{}, url string, method string) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "sendToJson")
 	}
 
 	defer resp.Body.Close()

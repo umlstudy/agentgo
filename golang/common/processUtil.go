@@ -1,29 +1,29 @@
 package common
 
 import (
-	"errors"
 	"strings"
 
+	"github.com/pkg/errors"
 	process "github.com/shirou/gopsutil/process"
 )
 
 func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
 	pids, err := process.Pids()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "FindMatchedPids #1")
 	}
 	if len(pids) == 0 {
-		return nil, errors.New("could not get pids")
+		return nil, errors.New("could not get pids #2")
 	}
 	processStatuses := []ProcessStatus{}
 	for _, pid := range pids {
 		proc, err := process.NewProcess(int32(pid))
 		if err != nil {
-			return nil, err
+			continue
 		}
 		procName, err := proc.Name()
 		if err != nil {
-			return nil, err
+			continue
 		}
 		for _, procNamePart := range procNameParts {
 			if strings.Contains(procName, procNamePart) {
@@ -60,7 +60,7 @@ func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string) ([]P
 		if ps.ProcId < 1 {
 			newPss_, err := FindMatchedPids(procNameParts)
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "FindMatchedPids failed #5")
 			}
 			newPss = newPss_
 			break

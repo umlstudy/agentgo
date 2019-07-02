@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ServerInfo } from '../../model/ServerInfo';
+import ProcessStatusView from '../ProcessStatusView';
 import ResourceStatusView from '../ResourceStatusView';
 import './ServerView.css';
 
@@ -11,7 +12,7 @@ const renderResourceStatusView = (si: ServerInfo) => {
 
 const renderProcessStatusView = (si: ServerInfo) => {
     return si.processStatuses.map((ps, idx) => (
-        <div>{ps.name}</div>
+        <ProcessStatusView processStatus={ps} key={idx} />
     ));
 };
 

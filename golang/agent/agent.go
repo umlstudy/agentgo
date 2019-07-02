@@ -47,11 +47,11 @@ func main() {
 
 	ap, err := readJson("setting.json")
 	if err != nil {
-		panic(fmt.Errorf("ServerMonitory Gateway reading setting.json error.(%s)", err))
+		panic(err)
 	}
 	pss, err := common.FindMatchedPids(ap.ProcNameParts)
 	if err != nil {
-		panic(fmt.Errorf("ServerMonitory Gateway FindMatchedPids error.(%s)", err))
+		panic(err)
 	}
 
 	url := fmt.Sprintf(urlFormat, *host, *port)
@@ -62,12 +62,12 @@ func main() {
 
 		si, err := common.CreateServerInfo(pss, ap.ProcNameParts)
 		if err != nil {
-			panic(fmt.Errorf("ServerMonitory Gateway error.(%s, %s)", err, url))
+			panic(err)
 		}
 
 		err = common.SendPostToJson(si, url)
 		if err != nil {
-			panic(fmt.Errorf("ServerMonitory Gateway is not running.(%s, %s)", err, url))
+			panic(err)
 		}
 
 		fmt.Printf(".")
