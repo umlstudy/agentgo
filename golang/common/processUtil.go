@@ -7,7 +7,7 @@ import (
 	process "github.com/shirou/gopsutil/process"
 )
 
-func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
+func FindMatchedPids(procNameParts []string, warningConditionMap map[string]WarningCondition) ([]ProcessStatus, error) {
 	pids, err := process.Pids()
 	if err != nil {
 		return nil, errors.Wrap(err, "FindMatchedPids #1")
@@ -27,7 +27,8 @@ func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
 		}
 		for _, procNamePart := range procNameParts {
 			if strings.Contains(procName, procNamePart) {
-				processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procName}, procNamePart, pid})
+				wc := warningConditionMap[procNamePart]
+				processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procName, NORMAL, wc}, procNamePart, pid})
 				continue
 			}
 		}
@@ -43,14 +44,15 @@ func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
 			}
 		}
 		if !found {
-			processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procNamePart}, procNamePart, 0})
+			wc := warningConditionMap[procNamePart]
+			processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procNamePart, NORMAL, wc}, procNamePart, 0})
 		}
 	}
 
 	return processStatuses, nil
 }
 
-func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string) ([]ProcessStatus, error) {
+func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, warningConditionMap map[string]WarningCondition) ([]ProcessStatus, error) {
 	if len(pss) < 1 {
 		return nil, errors.New("empty process statuses")
 	}
@@ -58,7 +60,7 @@ func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string) ([]P
 	var newPss []ProcessStatus = nil
 	for _, ps := range pss {
 		if ps.ProcId < 1 {
-			newPss_, err := FindMatchedPids(procNameParts)
+			newPss_, err := FindMatchedPids(procNameParts, warningConditionMap)
 			if err != nil {
 				return nil, errors.Wrap(err, "FindMatchedPids failed #5")
 			}

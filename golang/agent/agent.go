@@ -15,6 +15,7 @@ const urlFormat string = "http://%s:%d/recvServerInfo"
 
 type AgentProperties struct {
 	ProcNameParts []string `json:"procNameParts"`
+	w
 }
 
 func readJson(fileName string) (*AgentProperties, error) {

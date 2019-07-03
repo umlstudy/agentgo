@@ -1,9 +1,15 @@
 package common
 
+type WarningCondition struct {
+	SendAlarmOccuredAfter    uint32 `json:"sendAlarmOccuredAfter"`
+	ResendAlarmLastSendAfter uint32 `json:"resendAlarmLastSendAfter"`
+}
+
 type AbstractStatus struct {
 	Id           string       `json:"id"`
 	Name         string       `json:"name"`
 	WarningLevel WarningLevel `json:"warningLevel"`
+	WarningCondition
 }
 
 // ResourceStatus is ResourceStatus
@@ -26,11 +32,6 @@ type ProcessStatus struct {
 	AbstractStatus
 	RealName string `json:"realName"`
 	ProcId   int32  `json:"procId"`
-}
-
-type WarningCondition struct {
-	SendAlarmOccuredAfter    uint32 `json:"sendAlarmOccuredAfter"`
-	ResendAlarmLastSendAfter uint32 `json:"resendAlarmLastSendAfter"`
 }
 
 // DefaultServerPort is DefaultServerPort
