@@ -6,8 +6,8 @@ import './ResourceStatusView.css'
 // tslint:disable-next-line:interface-name
 export interface ResourceStatusViewProps {
     resourceStatus: ResourceStatus;
-    key:number;
     tick:number;
+    simpleMode:boolean;
 }
 
 const WIDHT:number=150;
@@ -31,25 +31,37 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
 
     public render() {
         const resourceStatus = this.props.resourceStatus;
-        return (
-            <div className="ResourceStatusView">
-                {resourceStatus.name}<br />
-                <canvas
-                    ref={(canvas) => { this.canvas = canvas; }}
-                    width={WIDHT}
-                    height={HEIGHT} />
-            </div>
-        );
+        if ( this.props.simpleMode ) {
+            return (
+                <div className="ResourceStatusView">
+                    {resourceStatus.name}({resourceStatus.value}%)
+                </div>
+            );
+        } else {
+            return (
+                <div className="ResourceStatusView">
+                    {resourceStatus.name}<br />
+                    <canvas
+                        ref={(canvas) => { this.canvas = canvas; }}
+                        width={WIDHT}
+                        height={HEIGHT} />
+                </div>
+            );
+        }
     }
 
     public componentDidMount() {
         this.updateCanvas();
     }
+
     public componentDidUpdate() {
         this.updateCanvas();
     }
 
     private updateCanvas() {
+        if ( this.props.simpleMode ) {
+            return;
+        }
         let tick = 0;
         if ( this.props.tick !== undefined ) {
             tick = this.props.tick%10*2;

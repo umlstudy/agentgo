@@ -7,6 +7,7 @@ import './ServerView.css';
 // tslint:disable-next-line:interface-name
 export interface ServerViewProps {
     serverInfo:ServerInfo;
+    simpleMode:boolean;
 }
 class ServerView extends React.Component<ServerViewProps> {
 
@@ -16,8 +17,8 @@ class ServerView extends React.Component<ServerViewProps> {
                 <div className="ServerName">
                     {this.props.serverInfo.name}
                 </div>
-                <ResourceStatusContainerView serverInfo={this.props.serverInfo}/>
-                { !!this.props.serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={this.props.serverInfo}/>: ''}
+                <ResourceStatusContainerView serverInfo={this.props.serverInfo} simpleMode={this.props.simpleMode}/>
+                { !!this.props.serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={this.props.serverInfo} simpleMode={this.props.simpleMode}/>: ''}
             </div>
         );
     }

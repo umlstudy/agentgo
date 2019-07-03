@@ -14,11 +14,10 @@ class ProcessStatusView extends React.Component<ProcessStatusViewProps> {
         const processStatus = this.props.processStatus;
         return (
             <div className="ProcessStatusView">
-                {processStatus.realName}( 
                 { processStatus.procId > 0 ? 
-                    <span className="running">Running</span>: 
-                    <span className="stopped">Stopped</span>
-                })
+                    <span className="running">{processStatus.realName}</span>: 
+                    <span className="stopped">{processStatus.realName}</span>
+                }
             </div>
         );
     }

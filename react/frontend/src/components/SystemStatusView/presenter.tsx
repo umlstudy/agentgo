@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import * as React from 'react';
+import CheckBox from 'src/common/ui/components/CheckBox/CheckBox';
 import ArrayUtil from 'src/common/util/ArrayUtil';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
 import * as Constants from '../Constants';
@@ -17,6 +18,7 @@ interface SystemStausViewLocalProps {
 interface SystemStausViewLocalStates {
     serverInfoMapModified: boolean;
     timerInterval:NodeJS.Timeout;
+    simpleMode:boolean;
 };
 class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemStausViewLocalStates> {
 
@@ -28,6 +30,7 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
             }, 1000);
             return {
                 serverInfoMapModified:nextProps.serverInfoMapModified,
+                simpleMode:true,
                 timerInterval
             }
         }
@@ -47,7 +50,10 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
         timerInterval:null
     }
 
-    public shouldComponentUpdate(nextProps: SystemStausViewLocalProps):boolean {
+    public shouldComponentUpdate(nextProps: SystemStausViewLocalProps, nextStates: SystemStausViewLocalStates):boolean {
+        if ( nextStates.simpleMode !== this.state.simpleMode ) {
+            return true;
+        }
         return nextProps.serverInfoMapModified;
     }
 
@@ -61,10 +67,27 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
         );
     }
 
+    public checkBoxClick(checkbox:boolean) {
+        this.setState({
+            ...this.state,
+            simpleMode: checkbox
+        });
+    }
+
     private renderServerViews = (serverInfos: ServerInfo[]) => {
-        return serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
-            <ServerView serverInfo={value} key={index}/>
-        ));
+        const checkBoxClick = this.checkBoxClick.bind(this);
+        return (
+            <>
+                <div>
+                    <CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={this.state.simpleMode}/>
+                </div>
+                <div>
+                    {serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
+                        <ServerView serverInfo={value} key={index} simpleMode={this.state.simpleMode}/>
+                    ))}
+                </div>
+            </>
+        );
     }
 }
 
