@@ -26,8 +26,8 @@ const initialState:StoreObject = {
         "aaaa":{
             id:"aaaa",
             name:"aaaa",
-            resourceStatusesModified:true,
-            processStatusesModified:true,
+            resourceStatusesModified:false,
+            processStatusesModified:false,
             resourceStatuses: [
                 { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
                 { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
@@ -40,7 +40,7 @@ const initialState:StoreObject = {
             ]
         },
     },
-    serverInfoMapModified:true
+    serverInfoMapModified:false
 };
 
 const reducer= handleActions({
@@ -142,7 +142,7 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
         });
     }
 
-    serverInfoMapModifiedTmp = serverInfoMapModifiedTmp || oldSi.processStatusesModified || oldSi.resourceStatusesModified;
+    serverInfoMapModifiedTmp = serverInfoMapModifiedTmp || (!!oldSi && oldSi.processStatusesModified || oldSi.resourceStatusesModified );
 
     return {
         ...oldStoreObject, 

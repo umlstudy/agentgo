@@ -47,8 +47,8 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
         timerInterval:null
     }
 
-    public shouldComponentUpdate(nextProps: SystemStausViewLocalProps, nextState: SystemStausViewLocalStates):boolean {
-        return nextState.serverInfoMapModified;
+    public shouldComponentUpdate(nextProps: SystemStausViewLocalProps):boolean {
+        return nextProps.serverInfoMapModified;
     }
 
     public render() {
