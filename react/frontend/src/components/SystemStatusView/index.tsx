@@ -1,13 +1,14 @@
 import { connect } from 'react-redux';
+import GlobalState from 'src/model/GlobalState';
 import { ServerInfo } from 'src/model/ServerInfo';
 import { actionCreators as counter } from '../../store/modules/counter'
 import SystemStausView from './presenter'
 
-const mapStateToProps = (globalState: any) => {
+const mapStateToProps = (globalState: GlobalState) => {
     return {
-        isRunning: globalState.counter.isRunning,
-        serverInfoMap: globalState.counter.serverInfoMap,
-        serverInfoMapModified: globalState.counter.serverInfoMapModified
+        isRunning: globalState.reducer.isRunning,
+        serverInfoMap: globalState.reducer.serverInfoMap,
+        serverInfoMapModified: globalState.reducer.serverInfoMapModified
     };
 };
 
