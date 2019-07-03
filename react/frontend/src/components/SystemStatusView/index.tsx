@@ -1,12 +1,11 @@
 import { connect } from 'react-redux';
 import GlobalState from 'src/model/GlobalState';
 import { ServerInfo } from 'src/model/ServerInfo';
-import { actionCreators as counter } from '../../store/modules/counter'
+import { actionCreators as actions } from '../../store/modules/reducer'
 import SystemStausView from './presenter'
 
 const mapStateToProps = (globalState: GlobalState) => {
     return {
-        isRunning: globalState.reducer.isRunning,
         serverInfoMap: globalState.reducer.serverInfoMap,
         serverInfoMapModified: globalState.reducer.serverInfoMapModified
     };
@@ -14,8 +13,8 @@ const mapStateToProps = (globalState: GlobalState) => {
 
 const mapDispatchProps = (dispatch: any) => {
     return {
-        tick: () => { dispatch(counter.tick()) },
-        request: (si:ServerInfo) => { dispatch(counter.request(si)) },
+        tick: () => { dispatch(actions.tick()) },
+        request: (si:ServerInfo) => { dispatch(actions.request(si)) },
     };
 };
 

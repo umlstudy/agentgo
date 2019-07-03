@@ -2,65 +2,57 @@ import Axios from 'axios';
 import * as React from 'react';
 import ArrayUtil from 'src/common/util/ArrayUtil';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
-import { StoreObject } from 'src/model/StoreObject';
 import * as Constants from '../Constants';
 import ServerView from '../ServerView';
 
 // tslint:disable-next-line:interface-name
 interface SystemStausViewLocalProps {
-    isRunning: boolean;
     serverInfoMap: ServerInfoMap;
     serverInfoMapModified: boolean;
-    tick:VoidFunction;
+    tick:() => void;
+    request:(si:ServerInfo) => void;
 };
-class SystemStausView extends React.Component<SystemStausViewLocalProps> {
 
-    public static getDerivedStateFromProps(nextProps: SystemStausViewLocalProps, prevState: any) {
-        if ( prevState == null ) {
+// tslint:disable-next-line:interface-name
+interface SystemStausViewLocalStates {
+    serverInfoMapModified: boolean;
+    timerInterval:NodeJS.Timeout;
+};
+class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemStausViewLocalStates> {
+
+    public static getDerivedStateFromProps(nextProps: SystemStausViewLocalProps, prevState: SystemStausViewLocalStates):SystemStausViewLocalStates {
+        if ( !prevState.timerInterval ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
                 SystemStausView.requestDateFromServer(nextProps);
             }, 1000);
             return {
-                ...nextProps,
-                isRunning:true,
+                serverInfoMapModified:nextProps.serverInfoMapModified,
                 timerInterval
             }
         }
 
-        return null;
+        return prevState;
     }
 
-    private static requestDateFromServer = (nextProps: any) => {
+    private static requestDateFromServer = (nextProps: SystemStausViewLocalProps):void => {
         Axios.get(Constants.GATEWAY_URL)
-        .then((response)=>{
-            const si:ServerInfo=response.data[0];
-            nextProps.request(si);
-        });
+            .then((response)=>{
+                const si:ServerInfo=response.data[0];
+                nextProps.request(si);
+            });
     }
 
-    // public state:any = {
-    //     isRunning:null
-    // }
+    public state:any = {
+        timerInterval:null
+    }
 
-    // public getSnapshotBeforeUpdate(prevProps:any, prevState:any) {
-    //     if (this.props.isRunning !== prevProps.isRunning ) {
-    //         return true;
-    //     } 
-    //     return false;
-    // }
-
-    // public componentDidUpdate(prevProps:any, prevState:any) {
-    //     return true;
-    // }
-
-    public shouldComponentUpdate(nextProps: any, nextState: any) {
+    public shouldComponentUpdate(nextProps: SystemStausViewLocalProps, nextState: SystemStausViewLocalStates):boolean {
         return nextState.serverInfoMapModified;
     }
 
     public render() {
-        const props = (this as any).props as StoreObject;
-        const serverInfoMap = props.serverInfoMap;
+        const serverInfoMap = this.props.serverInfoMap;
         const serverInfos:ServerInfo[] = ArrayUtil.json2Array(serverInfoMap);
         return (
             <div>

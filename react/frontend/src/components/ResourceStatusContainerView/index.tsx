@@ -6,7 +6,6 @@ import ResourceStatusContainerView from './presenter';
 const mapStateToProps = (globalState: GlobalState, ownerProps:ServerViewProps) => {
     const newSi = globalState.reducer.serverInfoMap[ownerProps.serverInfo.id]
     return {
-        num: globalState.reducer.num,
         serverInfo:newSi
     };
 };

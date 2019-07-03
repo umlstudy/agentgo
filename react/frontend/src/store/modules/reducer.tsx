@@ -8,15 +8,11 @@ import ModelUtil from '../../common/util/ModelUtil'
 import ObjectUtil from '../../common/util/ObjectUtil'
 
 // 1.Actions
-const INCREMENT = 'counter/INCREMENT';
-const DECREMENT = 'counter/DECREMENT';
 const TICK = 'counter/TICK';
 const REQUEST = 'counter/REQUEST';
 
 
 // 2.Action Creators
-const increment = createAction(INCREMENT);
-const decrement = createAction(DECREMENT);
 const tick = createAction(TICK);
 const request = createAction(REQUEST, (si:ServerInfo)=>si);
 
@@ -25,7 +21,6 @@ const request = createAction(REQUEST, (si:ServerInfo)=>si);
 const initialState:StoreObject = {
     num: 92,
 // tslint:disable-next-line: object-literal-sort-keys
-    isRunning:false,
     tick : 0,
     serverInfoMap:{
         "aaaa":{
@@ -49,27 +44,11 @@ const initialState:StoreObject = {
 };
 
 const reducer= handleActions({
-    [INCREMENT]:applyIncrement,
-    [DECREMENT]:applyDecrement,
     [TICK]:applyTick,
     [REQUEST]:applyRequest
 }, initialState);
  
 // 4.Reducer Functions
-function applyIncrement(state:StoreObject, action:any) {
-    return {
-        ...state, 
-        num : state.num + 1
-    }
-}
-
-function applyDecrement(state:StoreObject, action:any) {
-    return {
-        ...state, 
-        num : state.num - 1
-    }
-}
-
 function applyTick(state:StoreObject, action:any) {
     const newState = {
         ...state, 
@@ -180,8 +159,6 @@ function applyRequest(state:StoreObject, action:any) {
 
 // Export Action Creators
 export const actionCreators = {
-    decrement,
-    increment,
     tick,
     request
 };

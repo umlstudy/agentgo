@@ -6,7 +6,6 @@ import ProcessStatusContainerView from './presenter';
 const mapStateToProps = (globalState: GlobalState, ownProps:ServerViewProps) => {
     const newSi = globalState.reducer.serverInfoMap[ownProps.serverInfo.id]
     return {
-        num: globalState.reducer.num,
         serverInfo:newSi
     };
 };
