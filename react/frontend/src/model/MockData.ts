@@ -1,3 +1,4 @@
+import { WarningLevel } from './enums/WarningLevel';
 import { ProcessStatus } from './ProcessStatus';
 import { ResourceStatus } from './ResourceStatus';
 import { ServerInfoMap } from "./ServerInfo";
@@ -17,6 +18,7 @@ export const serverInfoMap:ServerInfoMap = {
         ],
         processStatuses: [
             { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
-        ]
+        ],
+        wl:WarningLevel.NORMAL
     },
 };

@@ -69,7 +69,7 @@ func recvServerInfo(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	serverInfoMap[si.ID] = si
+	serverInfoMap[si.Id] = si
 
 	send(rw, req, "OK")
 

@@ -3,11 +3,11 @@ package common
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/mem"
-	"github.com/pkg/errors"
 )
 
 func CreateServerInfo(pss []ProcessStatus, procNameParts []string) (*ServerInfo, error) {
@@ -24,14 +24,14 @@ func CreateServerInfo(pss []ProcessStatus, procNameParts []string) (*ServerInfo,
 		cpuSum = cpuSum + per
 	}
 	cpuAvg := uint32(cpuSum / float64(len(percentage)))
-	resourceStatuss = append(resourceStatuss, ResourceStatus{"cpu", 1, 100, "cpu", cpuAvg})
+	resourceStatuss = append(resourceStatuss, ResourceStatus{AbstractStatus{"cpu", "cpu"}, 1, 100, cpuAvg})
 
 	// 메모리
 	vmStat, err := mem.VirtualMemory()
 	if err != nil {
 		return nil, errors.Wrap(err, "memory info read failed")
 	}
-	resourceStatuss = append(resourceStatuss, ResourceStatus{"mem", 1, 100, "mem", uint32(vmStat.UsedPercent)})
+	resourceStatuss = append(resourceStatuss, ResourceStatus{AbstractStatus{"mem", "mem"}, 1, 100, uint32(vmStat.UsedPercent)})
 
 	// 파티션
 	ptns, err := disk.Partitions(false)
@@ -43,7 +43,7 @@ func CreateServerInfo(pss []ProcessStatus, procNameParts []string) (*ServerInfo,
 		if err != nil {
 			return nil, errors.Wrap(err, "disk info read failed")
 		}
-		resourceStatuss = append(resourceStatuss, ResourceStatus{diskStat.Path, 1, 100, diskStat.Path, uint32(diskStat.UsedPercent)})
+		resourceStatuss = append(resourceStatuss, ResourceStatus{AbstractStatus{diskStat.Path, diskStat.Path}, 1, 100, uint32(diskStat.UsedPercent)})
 	}
 
 	// 프로세스
@@ -58,7 +58,7 @@ func CreateServerInfo(pss []ProcessStatus, procNameParts []string) (*ServerInfo,
 		return nil, errors.Wrap(err, "host info read failed")
 	}
 
-	serverInfo := &ServerInfo{hostStat.Hostname, fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), resourceStatuss, pss}
+	serverInfo := &ServerInfo{AbstractStatus{hostStat.Hostname, fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform)}, resourceStatuss, pss}
 
 	return serverInfo, nil
 }

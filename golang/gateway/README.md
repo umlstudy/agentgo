@@ -1,7 +1,3 @@
-# golang 기본문법
-
-https://mingrammer.com/gobyexample/
-
 # 코드테스트
 
 https://www.katacoda.com/courses/golang/playground

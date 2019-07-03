@@ -1,5 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { GRAHP_VALUES_CNT } from 'src/Constants';
+import { WarningLevel } from 'src/model/enums/WarningLevel';
 import { ProcessStatus } from 'src/model/ProcessStatus';
 import { ResourceStatus } from 'src/model/ResourceStatus';
 import { ServerInfo } from 'src/model/ServerInfo';
@@ -38,7 +39,8 @@ const initialState:StoreObject = {
             ],
             processStatuses: [
                 { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
-            ]
+            ],
+            wl:WarningLevel.NORMAL
         },
     },
     serverInfoMapModified:false

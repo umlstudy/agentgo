@@ -27,7 +27,7 @@ func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
 		}
 		for _, procNamePart := range procNameParts {
 			if strings.Contains(procName, procNamePart) {
-				processStatuses = append(processStatuses, ProcessStatus{procNamePart, procNamePart, procName, pid})
+				processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procName}, procNamePart, pid})
 				continue
 			}
 		}
@@ -43,7 +43,7 @@ func FindMatchedPids(procNameParts []string) ([]ProcessStatus, error) {
 			}
 		}
 		if !found {
-			processStatuses = append(processStatuses, ProcessStatus{procNamePart, procNamePart, procNamePart, 0})
+			processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procNamePart}, procNamePart, 0})
 		}
 	}
 
