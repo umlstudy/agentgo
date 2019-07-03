@@ -9,8 +9,8 @@ export interface ResourceStatusContainerViewProps {
 }
 class ResourceStatusContainerView extends React.Component<ResourceStatusContainerViewProps> {
 
-    public shouldComponentUpdate(nextProps: ResourceStatusContainerViewProps, nextState: any) {
-        return !nextState || nextState.resourceStatusesModified;
+    public shouldComponentUpdate(nextProps: ResourceStatusContainerViewProps) {
+        return nextProps.serverInfo.resourceStatusesModified;
     }
 
     public render() {
