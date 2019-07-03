@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import { actionCreators as counter } from '../../store/modules/counter'
 import ServerView from './presenter'
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (globalState: any) => {
     return {
-        num: state.counter.num,
+        num: globalState.counter.num,
     };
 };
 

@@ -2,10 +2,16 @@ import * as React from 'react';
 import { ProcessStatus } from '../../model/ProcessStatus';
 import './ProcessStatusView.css';
 
-class ProcessStatusView extends React.Component<any, any> {
+// tslint:disable-next-line:interface-name
+export interface ProcessStatusViewProps {
+    processStatus: ProcessStatus;
+    key:number;
+}
+
+class ProcessStatusView extends React.Component<ProcessStatusViewProps> {
 
     public render() {
-        const processStatus = (this.props as any).processStatus as ProcessStatus;
+        const processStatus = this.props.processStatus;
         return (
             <div className="ProcessStatusView">
                 {processStatus.realName}( 

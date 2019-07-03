@@ -2,9 +2,9 @@
 import { connect } from 'react-redux';
 import ResourceStatusView from './presenter'
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (globalState: any) => {
     return {
-        tick: state.counter.tick,
+        tick: globalState.counter.tick,
     };
 };
 

@@ -3,14 +3,18 @@ import { ServerInfo } from 'src/model/ServerInfo';
 import ResourceStatusView from '../ResourceStatusView';
 import './ResourceStatusContainerView.css';
 
-class ResourceStatusContainerView extends React.Component<any, any> {
+// tslint:disable-next-line: interface-name
+export interface ResourceStatusContainerViewProps {
+    serverInfo: ServerInfo;
+}
+class ResourceStatusContainerView extends React.Component<ResourceStatusContainerViewProps> {
 
-    public shouldComponentUpdate(nextProps: any, nextState: any) {
+    public shouldComponentUpdate(nextProps: ResourceStatusContainerViewProps, nextState: any) {
         return !nextState || nextState.resourceStatusesModified;
     }
 
     public render() {
-        const serverInfo = this.props.serverInfo as ServerInfo;
+        const serverInfo = this.props.serverInfo;
         return (
         <div>
             {serverInfo.resourceStatuses.map((rs, idx) => (

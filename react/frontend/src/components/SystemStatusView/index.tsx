@@ -3,12 +3,11 @@ import { ServerInfo } from 'src/model/ServerInfo';
 import { actionCreators as counter } from '../../store/modules/counter'
 import SystemStausView from './presenter'
 
-
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (globalState: any) => {
     return {
-        isRunning: state.counter.isRunning,
-        serverInfoMap: state.counter.serverInfoMap,
-        serverInfoMapModified: state.counter.serverInfoMapModified
+        isRunning: globalState.counter.isRunning,
+        serverInfoMap: globalState.counter.serverInfoMap,
+        serverInfoMapModified: globalState.counter.serverInfoMapModified
     };
 };
 

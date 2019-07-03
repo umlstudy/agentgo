@@ -3,10 +3,12 @@ import ContextUtil from 'src/common/ui/util/ContextUtil';
 import { ResourceStatus, VALUES_CNT } from '../../model/ResourceStatus';
 import './ResourceStatusView.css'
 
-// interface IProps {
-//     resourceStatus: ResourceStatus;
-//     // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-// }
+// tslint:disable-next-line:interface-name
+export interface ResourceStatusViewProps {
+    resourceStatus: ResourceStatus;
+    key:number;
+    tick:number;
+}
 
 const WIDHT:number=150;
 const HEIGHT:number=100;
@@ -19,16 +21,16 @@ const CHART_ALPHA:number=0.5;
 const FONT_NAME:string='20px san-serif';
 const TEXT_HEIGHT:number=ContextUtil.measureFontHeight(FONT_NAME, '95%').height;
 
-class ResourceStatusView extends React.Component<any, any> {
+class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
 
     private canvas: any;
 
-    public shouldComponentUpdate(nextProps: any, nextState: any) {
+    public shouldComponentUpdate(nextProps: ResourceStatusViewProps, nextState: any) {
         return this.props.tick !== nextProps.tick;
     }
 
     public render() {
-        const resourceStatus = (this.props as any).resourceStatus as ResourceStatus;
+        const resourceStatus = this.props.resourceStatus;
         return (
             <div className="ResourceStatusView">
                 {resourceStatus.name}<br />
@@ -76,7 +78,7 @@ class ResourceStatusView extends React.Component<any, any> {
         ctx.stroke();
         
         // 3. draw charts
-        const resourceStatus = (this.props as any).resourceStatus as ResourceStatus;
+        const resourceStatus = this.props.resourceStatus;
         const values = resourceStatus.values.slice();
         const valLen = values.length;
         if ( valLen > 0 ) {

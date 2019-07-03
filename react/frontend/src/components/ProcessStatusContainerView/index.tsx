@@ -1,10 +1,12 @@
 import { connect } from 'react-redux';
+import { StoreObject } from 'src/model/StoreObject';
 import ProcessStatusContainerView from './presenter';
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (globalState: any, ownProps:any) => {
+    const newSi = (globalState.counter as StoreObject).serverInfoMap[ownProps.serverInfo.id]
     return {
-        num: state.counter.num,
-        processStatusesModified : state.counter.processStatusesModified,
+        num: globalState.counter.num,
+        serverInfo:newSi
     };
 };
 

@@ -1,10 +1,13 @@
 import { connect } from 'react-redux';
+import { StoreObject } from 'src/model/StoreObject';
+import { ServerViewProps } from '../ServerView/presenter';
 import ResourceStatusContainerView from './presenter';
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (globalState: any, ownerProps:ServerViewProps) => {
+    const newSi = (globalState.counter as StoreObject).serverInfoMap[ownerProps.serverInfo.id]
     return {
-        num: state.counter.num,
-        resourceStatusesModified: state.counter.resourceStatusesModified,
+        num: globalState.counter.num,
+        serverInfo:newSi
     };
 };
 

@@ -1,14 +1,21 @@
 import Axios from 'axios';
 import * as React from 'react';
 import ArrayUtil from 'src/common/util/ArrayUtil';
-import { ServerInfo } from 'src/model/ServerInfo';
+import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
 import { StoreObject } from 'src/model/StoreObject';
 import * as Constants from '../Constants';
-import ServerView from '../ServerView/presenter';
+import ServerView from '../ServerView';
 
-class SystemStausView extends React.Component<any, any> {
+// tslint:disable-next-line:interface-name
+interface SystemStausViewLocalProps {
+    isRunning: boolean;
+    serverInfoMap: ServerInfoMap;
+    serverInfoMapModified: boolean;
+    tick:VoidFunction;
+};
+class SystemStausView extends React.Component<SystemStausViewLocalProps> {
 
-    public static getDerivedStateFromProps(nextProps: any, prevState: any) {
+    public static getDerivedStateFromProps(nextProps: SystemStausViewLocalProps, prevState: any) {
         if ( prevState == null ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
@@ -64,7 +71,7 @@ class SystemStausView extends React.Component<any, any> {
 
     private renderServerViews = (serverInfos: ServerInfo[]) => {
         return serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
-            <ServerView serverInfo={value} key={index} keyValue={index} />
+            <ServerView serverInfo={value} key={index}/>
         ));
     }
 }

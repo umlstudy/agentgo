@@ -1,19 +1,23 @@
 import * as React from 'react';
-import ProcessStatusContainerView from '../ProcessStatusContainerView/presenter';
-import ResourceStatusContainerView from '../ResourceStatusContainerView/presenter';
+import { ServerInfo } from 'src/model/ServerInfo';
+import ProcessStatusContainerView from '../ProcessStatusContainerView';
+import ResourceStatusContainerView from '../ResourceStatusContainerView';
 import './ServerView.css';
 
-class ServerView extends React.Component<any, any> {
+// tslint:disable-next-line:interface-name
+export interface ServerViewProps {
+    serverInfo:ServerInfo;
+}
+class ServerView extends React.Component<ServerViewProps> {
 
     public render() {
-        const serverInfo = this.props.serverInfo;
         return (
             <div className="ServerView">
                 <div className="ServerName">
-                    {serverInfo.name}
+                    {this.props.serverInfo.name}
                 </div>
-                <ResourceStatusContainerView serverInfo={serverInfo}/>
-                { !!serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={serverInfo}/>: ''}
+                <ResourceStatusContainerView serverInfo={this.props.serverInfo}/>
+                { !!this.props.serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={this.props.serverInfo}/>: ''}
             </div>
         );
     }
