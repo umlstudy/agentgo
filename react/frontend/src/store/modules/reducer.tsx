@@ -1,6 +1,7 @@
 import { createAction, handleActions } from 'redux-actions';
+import { GRAHP_VALUES_CNT } from 'src/Constants';
 import { ProcessStatus } from 'src/model/ProcessStatus';
-import { ResourceStatus, VALUES_CNT } from 'src/model/ResourceStatus';
+import { ResourceStatus } from 'src/model/ResourceStatus';
 import { ServerInfo } from 'src/model/ServerInfo';
 import { StoreObject } from 'src/model/StoreObject';
 import ArrayUtil from '../../common/util/ArrayUtil'
@@ -29,11 +30,11 @@ const initialState:StoreObject = {
             resourceStatusesModified:false,
             processStatusesModified:false,
             resourceStatuses: [
-                { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1)} as ResourceStatus,
+                { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+                { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+                { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+                { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+                { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
             ],
             processStatuses: [
                 { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
@@ -92,7 +93,7 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
                     }
                 } else {
                     // 이전에 없던 ResourceStatus
-                    newSiRs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
+                    newSiRs.values = ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1);
                     oldRss.push(newSiRs);
                     resourceStatusesModifiedTmp = true;
                 }
@@ -138,7 +139,7 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
         oldServerInfoMap[newSi.id] = newSi;
         const newRss = newSi.resourceStatuses;
         newRss.forEach((rs:ResourceStatus)=>{
-            rs.values = ArrayUtil.getArrayWithLimitedLength(VALUES_CNT+1);
+            rs.values = ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1);
         });
     }
 

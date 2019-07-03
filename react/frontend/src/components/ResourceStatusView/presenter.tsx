@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ContextUtil from 'src/common/ui/util/ContextUtil';
-import { ResourceStatus, VALUES_CNT } from '../../model/ResourceStatus';
+import { GRAHP_VALUES_CNT } from 'src/Constants';
+import { ResourceStatus } from '../../model/ResourceStatus';
 import './ResourceStatusView.css'
 
 // tslint:disable-next-line:interface-name
@@ -128,7 +129,7 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
     }
 
     private getXposition(pos:number):number {
-        const xPixelDentisy = Math.floor(WIDHT/VALUES_CNT);
+        const xPixelDentisy = Math.floor(WIDHT/GRAHP_VALUES_CNT);
         const xPos = WIDHT - ((pos-1) * xPixelDentisy);
         return xPos;
     }

@@ -1,11 +1,9 @@
-export const VALUES_CNT:number = 50;
+import { AbstractStatus } from './AbstractStatus';
 
 // tslint:disable-next-line:interface-name
-export interface ResourceStatus {
-    id: string;
+export interface ResourceStatus extends AbstractStatus {
     min: number;
     max: number;
-    name: string;
     value: number;
     values: number[];
 }

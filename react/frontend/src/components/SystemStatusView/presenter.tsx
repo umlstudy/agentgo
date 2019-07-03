@@ -2,8 +2,8 @@ import Axios from 'axios';
 import * as React from 'react';
 import CheckBox from 'src/common/ui/components/CheckBox/CheckBox';
 import ArrayUtil from 'src/common/util/ArrayUtil';
+import * as Constants from 'src/Constants';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
-import * as Constants from '../Constants';
 import ServerView from '../ServerView';
 
 // tslint:disable-next-line:interface-name
