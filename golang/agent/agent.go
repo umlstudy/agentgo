@@ -13,9 +13,11 @@ import (
 
 const urlFormat string = "http://%s:%d/recvServerInfo"
 
+// https://dangerous-animal141.hatenablog.com/entry/2017/01/19/004650
+// enum -> json
 type AgentSettings struct {
 	ProcNameParts                                    []string                                                        `json:"procNameParts"`
-	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeCondition"`
+	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeConditionMap"`
 }
 
 func readJson(fileName string) (*AgentSettings, error) {

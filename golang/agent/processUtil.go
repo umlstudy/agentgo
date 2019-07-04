@@ -34,7 +34,7 @@ func FindMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 				if pid == 0 {
 					wl = common.ERROR
 				}
-				processStatuses = append(processStatuses, common.ProcessStatus{common.AbstractStatus{procNamePart, procName, wl, ac}, procNamePart, pid})
+				processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{Id: procNamePart, Name: procName, WarningLevel: wl, AlarmCondition: ac}, RealName: procNamePart, ProcId: pid})
 				continue
 			}
 		}
@@ -51,7 +51,7 @@ func FindMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 		if !found {
 			acwlcc := alarmConditionWithWarningLevelChangeConditionMap[procNamePart]
 			ac := acwlcc.AlarmCondition
-			processStatuses = append(processStatuses, common.ProcessStatus{common.AbstractStatus{procNamePart, procNamePart, common.ERROR, ac}, procNamePart, 0})
+			processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{Id: procNamePart, Name: procNamePart, WarningLevel: common.ERROR, AlarmCondition: ac}, RealName: procNamePart, ProcId: 0})
 		}
 	}
 

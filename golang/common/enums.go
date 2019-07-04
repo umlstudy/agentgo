@@ -19,10 +19,9 @@ var conditionTypeLabels = [...]string{
 	">",
 }
 
-func (c ConditionType) String() string {
+func (c ConditionType) GetLabel() string {
 	return conditionTypeLabels[uint32(c-1)%uint32(len(conditionTypeLabels))]
 }
-func (c ConditionType) GetLabel() string { return c.String() }
 
 // 1. ConditionType End
 
@@ -41,9 +40,8 @@ var warningLevelLabels = []string{
 	"ERROR",
 }
 
-func (w WarningLevel) String() string {
+func (w WarningLevel) GetLabel() string {
 	return warningLevelLabels[uint32(w-1)%uint32(len(warningLevelLabels))]
 }
-func (w WarningLevel) GetLabel() string { return w.String() }
 
 // 2. ConditionType End
