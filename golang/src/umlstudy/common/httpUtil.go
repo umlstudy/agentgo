@@ -45,3 +45,16 @@ func sendJson(method string, any interface{}, url string) error {
 
 	return nil
 }
+
+func ResponseToJson(w http.ResponseWriter, object interface{}) error {
+	js, err := ConvertObjectToJsonBytes(object)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+
+	return nil
+}

@@ -2,8 +2,8 @@ package common
 
 // AlarmCondition is AlarmCondition
 type AlarmCondition struct {
-	SendAlarmOccuredAfter    uint32 `json:"sendAlarmOccuredAfter"`
-	ResendAlarmLastSendAfter uint32 `json:"resendAlarmLastSendAfter"`
+	SendAlarmOccuredAfter    uint64 `json:"sendAlarmOccuredAfter"`
+	ResendAlarmLastSendAfter uint64 `json:"resendAlarmLastSendAfter"`
 }
 
 // WarningLevelChangeCondition is WarningLevelChangeCondition
