@@ -1,6 +1,6 @@
 {
     "procNameParts":["java", "abc", "cmd", "rrss", "xd"],
-    "warningConditionMap":{
+    "alarmConditionWithWarningLevelChangeConditionMap":{
         "host": {
             "sendAlarmOccuredAfter":10,
             "resendAlarmLastSendAfter":100

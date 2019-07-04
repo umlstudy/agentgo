@@ -14,8 +14,8 @@ import (
 const urlFormat string = "http://%s:%d/recvServerInfo"
 
 type AgentSettings struct {
-	ProcNameParts       []string                           `json:"procNameParts"`
-	WarningConditionMap map[string]common.WarningCondition `json:"warningConditionMap"`
+	ProcNameParts                                    []string                                                        `json:"procNameParts"`
+	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeCondition"`
 }
 
 func readJson(fileName string) (*AgentSettings, error) {
@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	pss, err := common.FindMatchedPids(as.ProcNameParts, as.WarningConditionMap)
+	pss, err := FindMatchedPids(as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +61,7 @@ func main() {
 
 		time.Sleep(1 * time.Second)
 
-		si, err := common.CreateServerInfo(pss, as.ProcNameParts, as.WarningConditionMap)
+		si, err := CreateServerInfo(pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 		if err != nil {
 			panic(err)
 		}

@@ -7,7 +7,7 @@ import (
 	process "github.com/shirou/gopsutil/process"
 )
 
-func FindMatchedPids(procNameParts []string, warningConditionMap map[string]WarningCondition) ([]ProcessStatus, error) {
+func FindMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]AlarmConditionWithWarningLevelChangeCondition) ([]ProcessStatus, error) {
 	pids, err := process.Pids()
 	if err != nil {
 		return nil, errors.Wrap(err, "FindMatchedPids #1")
@@ -27,13 +27,17 @@ func FindMatchedPids(procNameParts []string, warningConditionMap map[string]Warn
 		}
 		for _, procNamePart := range procNameParts {
 			if strings.Contains(procName, procNamePart) {
-				wc := warningConditionMap[procNamePart]
-				processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procName, NORMAL, wc}, procNamePart, pid})
+				acwlcc := alarmConditionWithWarningLevelChangeConditionMap[procNamePart]
+				ac := acwlcc.AlarmCondition
+				wl := NORMAL
+				if pid == 0 {
+					wl = ERROR
+				}
+				processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procName, wl, ac}, procNamePart, pid})
 				continue
 			}
 		}
 	}
-
 	// 일치하는 프로세스가 없을 경우
 	for _, procNamePart := range procNameParts {
 		found := false
@@ -44,15 +48,16 @@ func FindMatchedPids(procNameParts []string, warningConditionMap map[string]Warn
 			}
 		}
 		if !found {
-			wc := warningConditionMap[procNamePart]
-			processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procNamePart, NORMAL, wc}, procNamePart, 0})
+			acwlcc := alarmConditionWithWarningLevelChangeConditionMap[procNamePart]
+			ac := acwlcc.AlarmCondition
+			processStatuses = append(processStatuses, ProcessStatus{AbstractStatus{procNamePart, procNamePart, ERROR, ac}, procNamePart, 0})
 		}
 	}
 
 	return processStatuses, nil
 }
 
-func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, warningConditionMap map[string]WarningCondition) ([]ProcessStatus, error) {
+func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]AlarmConditionWithWarningLevelChangeCondition) ([]ProcessStatus, error) {
 	if len(pss) < 1 {
 		return nil, errors.New("empty process statuses")
 	}
@@ -60,7 +65,7 @@ func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, warn
 	var newPss []ProcessStatus = nil
 	for _, ps := range pss {
 		if ps.ProcId < 1 {
-			newPss_, err := FindMatchedPids(procNameParts, warningConditionMap)
+			newPss_, err := FindMatchedPids(procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 			if err != nil {
 				return nil, errors.Wrap(err, "FindMatchedPids failed #5")
 			}
@@ -71,7 +76,6 @@ func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, warn
 
 	if newPss == nil {
 		for _, ps := range pss {
-
 			proc, err := process.NewProcess(int32(ps.ProcId))
 			if err != nil {
 				ps.ProcId = 0
@@ -86,7 +90,6 @@ func CheckAliveProcessStatuses(pss []ProcessStatus, procNameParts []string, warn
 				}
 			}
 		}
-
 		newPss = pss
 	}
 

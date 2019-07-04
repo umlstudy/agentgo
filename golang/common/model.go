@@ -1,16 +1,27 @@
 package common
 
 // WarningCondition is WarningCondition
-type WarningCondition struct {
+type AlarmCondition struct {
 	SendAlarmOccuredAfter    uint32 `json:"sendAlarmOccuredAfter"`
 	ResendAlarmLastSendAfter uint32 `json:"resendAlarmLastSendAfter"`
+}
+
+type WarningLevelChangeCondition struct {
+	WarningLevel  WarningLevel  `json:"warningLevel"`
+	ConditionType ConditionType `json:"conditionType"`
+	Value         uint32        `json:"value"`
+}
+
+type AlarmConditionWithWarningLevelChangeCondition struct {
+	AlarmCondition
+	WarningLevelChangeConditionMap map[WarningLevel]WarningLevelChangeCondition `json:"warningLevelChangeConditionMap"`
 }
 
 type AbstractStatus struct {
 	Id           string       `json:"id"`
 	Name         string       `json:"name"`
 	WarningLevel WarningLevel `json:"warningLevel"`
-	WarningCondition
+	AlarmCondition
 }
 
 // ResourceStatus is ResourceStatus
