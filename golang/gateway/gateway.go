@@ -69,6 +69,15 @@ func recvServerInfo(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if recvCnt%20 == 0 {
+		// fmt.Printf("%#v\n", si)
+		jsonStr, err := common.ConvertObjectToJsonString(si)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%s", jsonStr)
+	}
+
 	serverInfoMap[si.Id] = si
 
 	send(rw, req, "OK")

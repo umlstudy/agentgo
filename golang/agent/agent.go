@@ -13,12 +13,12 @@ import (
 
 const urlFormat string = "http://%s:%d/recvServerInfo"
 
-type AgentProperties struct {
-	ProcNameParts []string `json:"procNameParts"`
-	w
+type AgentSettings struct {
+	ProcNameParts       []string                           `json:"procNameParts"`
+	WarningConditionMap map[string]common.WarningCondition `json:"warningConditionMap"`
 }
 
-func readJson(fileName string) (*AgentProperties, error) {
+func readJson(fileName string) (*AgentSettings, error) {
 
 	jsonFile, err := os.Open(fileName)
 	if err != nil {
@@ -31,13 +31,13 @@ func readJson(fileName string) (*AgentProperties, error) {
 		return nil, err
 	}
 
-	var ap = AgentProperties{}
-	err = json.Unmarshal([]byte(byteValue), &ap)
+	var as = AgentSettings{}
+	err = json.Unmarshal([]byte(byteValue), &as)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ap, nil
+	return &as, nil
 }
 
 func main() {
@@ -46,11 +46,11 @@ func main() {
 	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
 	flag.Parse()
 
-	ap, err := readJson("setting.json")
+	as, err := readJson("agentSettings.json")
 	if err != nil {
 		panic(err)
 	}
-	pss, err := common.FindMatchedPids(ap.ProcNameParts)
+	pss, err := common.FindMatchedPids(as.ProcNameParts, as.WarningConditionMap)
 	if err != nil {
 		panic(err)
 	}
@@ -61,12 +61,12 @@ func main() {
 
 		time.Sleep(1 * time.Second)
 
-		si, err := common.CreateServerInfo(pss, ap.ProcNameParts)
+		si, err := common.CreateServerInfo(pss, as.ProcNameParts, as.WarningConditionMap)
 		if err != nil {
 			panic(err)
 		}
 
-		err = common.SendPostToJson(si, url)
+		err = common.SendPostWithJson(si, url)
 		if err != nil {
 			panic(err)
 		}

@@ -1,5 +1,6 @@
 package common
 
+// WarningCondition is WarningCondition
 type WarningCondition struct {
 	SendAlarmOccuredAfter    uint32 `json:"sendAlarmOccuredAfter"`
 	ResendAlarmLastSendAfter uint32 `json:"resendAlarmLastSendAfter"`

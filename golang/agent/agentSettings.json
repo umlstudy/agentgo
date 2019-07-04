@@ -1,0 +1,33 @@
+{
+    "procNameParts":["java", "abc", "cmd", "rrss", "xd"],
+    "warningConditionMap":{
+        "host": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "cpu": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "mem": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "disk1": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "disk2": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "disk3": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        },
+        "disk4": {
+            "sendAlarmOccuredAfter":10,
+            "resendAlarmLastSendAfter":100
+        }
+    }
+}
