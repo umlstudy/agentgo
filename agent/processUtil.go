@@ -8,7 +8,7 @@ import (
 	"github.com/umlstudy/serverMonitor/common"
 )
 
-func FindMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) ([]common.ProcessStatus, error) {
+func findMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) ([]common.ProcessStatus, error) {
 	pids, err := process.Pids()
 	if err != nil {
 		return nil, errors.Wrap(err, "FindMatchedPids #1")
@@ -58,19 +58,19 @@ func FindMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 	return processStatuses, nil
 }
 
-func CheckAliveProcessStatuses(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) ([]common.ProcessStatus, error) {
+func checkAliveProcessStatuses(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) ([]common.ProcessStatus, error) {
 	if len(pss) < 1 {
 		return nil, errors.New("empty process statuses")
 	}
 
-	var newPss []common.ProcessStatus = nil
+	var newPss []common.ProcessStatus
 	for _, ps := range pss {
 		if ps.ProcId < 1 {
-			newPss_, err := FindMatchedPids(procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+			newPssTmp, err := findMatchedPids(procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 			if err != nil {
 				return nil, errors.Wrap(err, "FindMatchedPids failed #5")
 			}
-			newPss = newPss_
+			newPss = newPssTmp
 			break
 		}
 	}

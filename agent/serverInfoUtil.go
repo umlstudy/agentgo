@@ -59,7 +59,7 @@ func determineWarningLevelB(value uint32, wlcc common.WarningLevelChangeConditio
 	return false
 }
 
-func CreateServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
+func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
 
 	resourceStatuss := []common.ResourceStatus{}
 
@@ -107,7 +107,7 @@ func CreateServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 	}
 
 	// 프로세스
-	pss, err = CheckAliveProcessStatuses(pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+	pss, err = checkAliveProcessStatuses(pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 	if err != nil {
 		return nil, errors.Wrap(err, "process info read failed")
 	}

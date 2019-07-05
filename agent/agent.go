@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-errors/errors"
 	"github.com/umlstudy/serverMonitor/common"
 )
 
@@ -15,12 +16,14 @@ const urlFormat string = "http://%s:%d/recvServerInfo"
 
 // https://dangerous-animal141.hatenablog.com/entry/2017/01/19/004650
 // enum -> json
+
+// AgentSettings is AgentSettings
 type AgentSettings struct {
 	ProcNameParts                                    []string                                                        `json:"procNameParts"`
 	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeConditionMap"`
 }
 
-func readJson(fileName string) (*AgentSettings, error) {
+func readJSON(fileName string) (*AgentSettings, error) {
 
 	jsonFile, err := os.Open(fileName)
 	if err != nil {
@@ -48,12 +51,14 @@ func main() {
 	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
 	flag.Parse()
 
-	as, err := readJson("agentSettings.json")
+	as, err := readJSON("agentSettings.json")
 	if err != nil {
+		fmt.Println(errors.Wrap(err, 2).ErrorStack())
 		panic(err)
 	}
-	pss, err := FindMatchedPids(as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
+	pss, err := findMatchedPids(as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 	if err != nil {
+		fmt.Println(errors.Wrap(err, 2).ErrorStack())
 		panic(err)
 	}
 
@@ -63,13 +68,15 @@ func main() {
 
 		time.Sleep(5 * time.Second)
 
-		si, err := CreateServerInfo(pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
+		si, err := createServerInfo(pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 		if err != nil {
+			fmt.Println(errors.Wrap(err, 2).ErrorStack())
 			panic(err)
 		}
 
 		err = common.SendPostWithJson(si, url)
 		if err != nil {
+			fmt.Println(errors.Wrap(err, 2).ErrorStack())
 			panic(err)
 		}
 
