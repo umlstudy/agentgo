@@ -96,9 +96,8 @@ func getColorString(wl common.WarningLevel) string {
 func getColorString2(si common.ServerInfo) string {
 	if si.IsRunning {
 		return "green"
-	} else {
-		return "red"
 	}
+	return "red"
 }
 func displayStatusDetail(si *common.ServerInfo) {
 

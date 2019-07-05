@@ -41,8 +41,10 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
     private static requestDateFromServer = (nextProps: SystemStausViewLocalProps):void => {
         Axios.get(Constants.GATEWAY_URL)
             .then((response)=>{
-                const si:ServerInfo=response.data[0];
-                nextProps.request(si);
+                if ( response.data.length > 0 ) {
+                    const si:ServerInfo=response.data[0];
+                    nextProps.request(si);
+                }
             });
     }
 
