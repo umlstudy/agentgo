@@ -16,7 +16,7 @@ import (
 // ServerInfo is ServerInfo
 type ServerInfo = common.ServerInfo
 
-var serverInfoMap = map[string]ServerInfo{}
+var serverInfoMap = make(map[string]*ServerInfo)
 
 func sayName(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, I'm a machine and my name is [miss.lee]"))
@@ -25,7 +25,7 @@ func sayName(w http.ResponseWriter, r *http.Request) {
 func responseServerInfos(w http.ResponseWriter, r *http.Request) {
 	sis := []ServerInfo{}
 	for _, value := range serverInfoMap {
-		sis = append(sis, value)
+		sis = append(sis, *value)
 	}
 
 	err := common.ResponseToJSON(w, sis)
@@ -100,9 +100,9 @@ func getColorString2(si common.ServerInfo) string {
 		return "red"
 	}
 }
-func displayStatusDetail(si common.ServerInfo) {
+func displayStatusDetail(si *common.ServerInfo) {
 
-	color := getColorString2(si)
+	color := getColorString2(*si)
 	siNameMsg := si.Name
 	if !si.IsRunning {
 		siNameMsg = fmt.Sprintf("%s-Died", siNameMsg)
@@ -159,6 +159,9 @@ var lastServerInfoRecvTimeMap = map[string]uint64{}
 
 var enableDisplay = false
 
+// var serverJudgeDiedTime = uint64(60*5) // 5분
+var serverJudgeDiedTime = uint64(20) // 20초
+
 func runLoop(runLoopQuitChan <-chan bool) {
 	notFinished := true
 	for notFinished {
@@ -175,7 +178,7 @@ func runLoop(runLoopQuitChan <-chan bool) {
 					currTime := uint64(time.Now().Unix())
 					// 10분 이상 serverInfo 가 갱신이 되지 않았다면
 					// 서버와의 연결이 종료된 것으로 간주함
-					if currTime > (lastServerInfoRecvTime + (60 * 10)) {
+					if (currTime - lastServerInfoRecvTime) > serverJudgeDiedTime {
 						si.IsRunning = false
 					}
 				}
@@ -212,7 +215,7 @@ func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
 	warningIfNeeded(si)
 
 	lastServerInfoRecvTimeMap[si.ID] = uint64(time.Now().Unix())
-	serverInfoMap[si.ID] = si
+	serverInfoMap[si.ID] = &si
 
 	err = common.ResponseToJSON(rw, "OK")
 	if err != nil {
