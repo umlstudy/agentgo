@@ -61,7 +61,7 @@ func main() {
 	i := 0
 	for true {
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(5 * time.Second)
 
 		si, err := CreateServerInfo(pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 		if err != nil {

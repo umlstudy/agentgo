@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/k0kubun/go-ansi"
+	"github.com/mitchellh/colorstring"
 	"github.com/umlstudy/serverMonitor/common"
 )
 
@@ -31,11 +34,11 @@ func responseServerInfos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var recvCnt = 0
+// var recvCnt = 0
 
 var lastAlarmTimes = map[string]uint64{}
 
-func warningIfNeeded(as common.AbstractStatus, id string) (bool, bool, string) {
+func warningIfNeeded_(as common.AbstractStatus, id string) (needAlarm bool) {
 	if as.WarningLevel == common.ERROR || as.WarningLevel == common.WARNING {
 		if as.ResendAlarmLastSendAfter > 0 {
 			// 유효한 알람 발송 정보일 경우
@@ -44,11 +47,127 @@ func warningIfNeeded(as common.AbstractStatus, id string) (bool, bool, string) {
 
 			if lastResendBaseTime < now {
 				lastAlarmTimes[id] = now
-				return true, true, ""
+				return true
 			}
 		}
 	}
-	return true, true, ""
+	return false
+}
+
+func warningIfNeeded(si common.ServerInfo) {
+	var buffer bytes.Buffer
+
+	// 1.
+	as := si.AbstractStatus
+	needAlarm := warningIfNeeded_(as, si.Id)
+	if as.WarningLevel == common.WARNING || as.WarningLevel == common.ERROR {
+		buffer.WriteString("\nsystem error occured")
+	}
+
+	for _, rs := range si.ResourceStatuses {
+		as := rs.AbstractStatus
+		needAlarm = needAlarm || warningIfNeeded_(as, fmt.Sprintf("%s-%s", si.Id, rs.Id))
+		if as.WarningLevel == common.WARNING || as.WarningLevel == common.ERROR {
+			buffer.WriteString(fmt.Sprintf("\nresource error (%s)", rs.Name))
+		}
+	}
+
+	for _, ps := range si.ProcessStatuses {
+		as := ps.AbstractStatus
+		needAlarm = needAlarm || warningIfNeeded_(as, fmt.Sprintf("%s-%s", si.Id, ps.Id))
+		if as.WarningLevel == common.WARNING || as.WarningLevel == common.ERROR {
+			buffer.WriteString(fmt.Sprintf("\nresource error (%s)", ps.Name))
+		}
+	}
+
+	if needAlarm {
+		// 알람 실행
+		fmt.Printf("%s\n", buffer.String())
+	}
+}
+
+func getColorString(wl common.WarningLevel) string {
+	if wl == common.WARNING {
+		return "yellow"
+	} else if wl == common.ERROR {
+		return "red"
+	} else {
+		return "green"
+	}
+}
+
+func displayStatus_(si common.ServerInfo) {
+
+	as := si.AbstractStatus
+	color := getColorString(as.WarningLevel)
+	colorstring.Fprintf(ansi.NewAnsiStdout(), fmt.Sprintf("[%s]* %s\n", color, si.Name))
+	ansiLine.inc()
+
+	for idx, rs := range si.ResourceStatuses {
+		if idx > 0 {
+			fmt.Printf(", ")
+		}
+		as := rs.AbstractStatus
+		color = getColorString(as.WarningLevel)
+		formatString := fmt.Sprintf("[%s]%s(%d)", color, rs.Name, rs.Value)
+		colorstring.Fprintf(ansi.NewAnsiStdout(), formatString)
+	}
+	fmt.Printf("\n")
+	ansiLine.inc()
+
+	for idx, ps := range si.ProcessStatuses {
+		if idx > 0 {
+			fmt.Printf(", ")
+		}
+		as := ps.AbstractStatus
+		color = getColorString(as.WarningLevel)
+		formatString := fmt.Sprintf("[%s]%s", color, ps.Name)
+		colorstring.Fprintf(ansi.NewAnsiStdout(), formatString)
+	}
+	fmt.Printf("\n")
+	ansiLine.inc()
+}
+
+type AnsiLine struct {
+	currentLine uint32
+	lastLine    uint32
+}
+
+func (al *AnsiLine) inc() {
+	al.currentLine++
+	if al.currentLine > al.lastLine {
+		al.lastLine = al.currentLine
+	}
+}
+
+func (al *AnsiLine) reset() {
+	ansi.CursorUp(int(al.currentLine))
+	al.currentLine = 0
+}
+
+var ansiLine = AnsiLine{}
+
+func displayStatus(quitRecvChan <-chan bool) {
+	notFinished := true
+	for notFinished {
+		select {
+		case <-quitRecvChan:
+			notFinished = false
+			break
+		default:
+			ansiLine.reset()
+			if len(serverInfoMap) > 0 {
+				for _, si := range serverInfoMap {
+					displayStatus_(si)
+				}
+			} else {
+				colorstring.Fprintf(ansi.NewAnsiStdout(), "[red][bold]empty serverInfos")
+				ansi.CursorHorizontalAbsolute(0)
+			}
+			time.Sleep(2 * time.Second)
+			break
+		}
+	}
 }
 
 func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
@@ -61,28 +180,13 @@ func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	warningIfNeeded(si.AbstractStatus, si.Id)
-
-	if recvCnt%20 == 0 {
-		jsonStr, err := common.ConvertObjectToJsonString(si)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("%s", jsonStr)
-	}
+	warningIfNeeded(si)
 
 	serverInfoMap[si.Id] = si
 
 	err = common.ResponseToJson(rw, "OK")
 	if err != nil {
 		fmt.Printf("%v\n", err)
-	}
-
-	recvCnt++
-
-	fmt.Printf(".")
-	if recvCnt%80 == 0 {
-		fmt.Printf("\n")
 	}
 }
 
@@ -94,6 +198,9 @@ func main() {
 
 func webServerStart(port int) {
 
+	quitRecvChan := make(chan bool)
+	defer close(quitRecvChan)
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", sayName)                               // 살아있는지 테스트용
@@ -101,11 +208,18 @@ func webServerStart(port int) {
 	mux.HandleFunc("/recvServerInfo", recvServerInfoFromAgent) // 에이전트로부터 자료 수신
 
 	t := time.Now()
-	fmt.Printf("> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
-	fmt.Printf(fmt.Sprintf("> Waiting for agent or front end UI... (port:%d)\n", port))
+	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
+	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> Waiting for agent or front end UI... (port:%d)\n", port)
+
+	ansi.CursorHide()
+
+	go displayStatus(quitRecvChan)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
+	// 종료 시그널 보냄
+	quitRecvChan <- true
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
+	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
+	ansi.CursorShow()
 }
