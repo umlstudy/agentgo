@@ -13,11 +13,11 @@ import (
 	"syscall"
 )
 
-var PIDFile = "/tmp/daemonize.pid"
+var pidFile = "/tmp/daemonize.pid"
 
 func savePID(pid int) {
 
-	file, err := os.Create(PIDFile)
+	file, err := os.Create(pidFile)
 	if err != nil {
 		log.Printf("Unable to create pid file : %v\n", err)
 		os.Exit(1)
@@ -36,7 +36,7 @@ func savePID(pid int) {
 
 }
 
-func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
+func sayHelloWorld(w http.ResponseWriter, r *http.Request) {
 	html := "Hello World"
 
 	w.Write([]byte(html))
@@ -64,21 +64,21 @@ func main2() {
 			fmt.Println("Received signal type : ", signalType)
 
 			// remove PID file
-			os.Remove(PIDFile)
+			os.Remove(pidFile)
 
 			os.Exit(0)
 
 		}()
 
 		mux := http.NewServeMux()
-		mux.HandleFunc("/", SayHelloWorld)
+		mux.HandleFunc("/", sayHelloWorld)
 		log.Fatalln(http.ListenAndServe(":8080", mux))
 	}
 
 	if strings.ToLower(os.Args[1]) == "start" {
 
 		// check if daemon already running.
-		if _, err := os.Stat(PIDFile); err == nil {
+		if _, err := os.Stat(pidFile); err == nil {
 			fmt.Println("Already running or /tmp/daemonize.pid file exist.")
 			os.Exit(1)
 		}
@@ -97,8 +97,8 @@ func main2() {
 	// and exit. If Process ID does not exist, prompt error and quit
 
 	if strings.ToLower(os.Args[1]) == "stop" {
-		if _, err := os.Stat(PIDFile); err == nil {
-			data, err := ioutil.ReadFile(PIDFile)
+		if _, err := os.Stat(pidFile); err == nil {
+			data, err := ioutil.ReadFile(pidFile)
 			if err != nil {
 				fmt.Println("Not running")
 				os.Exit(1)
@@ -106,7 +106,7 @@ func main2() {
 			ProcessID, err := strconv.Atoi(string(data))
 
 			if err != nil {
-				fmt.Println("Unable to read and parse process id found in ", PIDFile)
+				fmt.Println("Unable to read and parse process id found in ", pidFile)
 				os.Exit(1)
 			}
 
@@ -117,7 +117,7 @@ func main2() {
 				os.Exit(1)
 			}
 			// remove PID file
-			os.Remove(PIDFile)
+			os.Remove(pidFile)
 
 			fmt.Printf("Killing process ID [%v] now.\n", ProcessID)
 			// kill process and exit immediately

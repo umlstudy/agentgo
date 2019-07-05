@@ -76,7 +76,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 	acwwlcc := alarmConditionWithWarningLevelChangeConditionMap["cpu"]
 	ac := acwwlcc.AlarmCondition
 	wl := determineWarningLevelA(cpuAvg, acwwlcc.WarningLevelChangeConditionMap)
-	resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{Id: "cpu", Name: "cpu", WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: cpuAvg})
+	resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{ID: "cpu", Name: "cpu", WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: cpuAvg})
 
 	// 메모리
 	vmStat, err := mem.VirtualMemory()
@@ -87,7 +87,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 	acwwlcc = alarmConditionWithWarningLevelChangeConditionMap["mem"]
 	ac = acwwlcc.AlarmCondition
 	wl = determineWarningLevelA(memUsed, acwwlcc.WarningLevelChangeConditionMap)
-	resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{Id: "mem", Name: "mem", WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: memUsed})
+	resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{ID: "mem", Name: "mem", WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: memUsed})
 
 	// 파티션
 	ptns, err := disk.Partitions(false)
@@ -103,7 +103,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 		acwwlcc = alarmConditionWithWarningLevelChangeConditionMap[fmt.Sprintf("disk%d", i)]
 		ac = acwwlcc.AlarmCondition
 		wl = determineWarningLevelA(diskUsed, acwwlcc.WarningLevelChangeConditionMap)
-		resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{Id: diskStat.Path, Name: diskStat.Path, WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: diskUsed})
+		resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{ID: diskStat.Path, Name: diskStat.Path, WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: diskUsed})
 	}
 
 	// 프로세스
@@ -120,7 +120,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 
 	acwwlcc = alarmConditionWithWarningLevelChangeConditionMap["host"]
 	ac = acwwlcc.AlarmCondition
-	serverInfo := &common.ServerInfo{AbstractStatus: common.AbstractStatus{Id: hostStat.Hostname, Name: fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), WarningLevel: common.NORMAL, AlarmCondition: ac}, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
+	serverInfo := &common.ServerInfo{ID: hostStat.Hostname, Name: fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
 
 	return serverInfo, nil
 }

@@ -20,7 +20,7 @@ type AlarmConditionWithWarningLevelChangeCondition struct {
 
 // AbstractStatus is AbstractStatus
 type AbstractStatus struct {
-	Id           string       `json:"id"`
+	ID           string       `json:"id"`
 	Name         string       `json:"name"`
 	WarningLevel WarningLevel `json:"warningLevel"`
 	AlarmCondition
@@ -36,7 +36,9 @@ type ResourceStatus struct {
 
 // ServerInfo is ServerInfo
 type ServerInfo struct {
-	AbstractStatus
+	ID               string           `json:"id"`
+	Name             string           `json:"name"`
+	IsRunning        bool             `json:"isRunning"`
 	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
 	ProcessStatuses  []ProcessStatus  `json:"processStatuses"`
 }
@@ -45,7 +47,7 @@ type ServerInfo struct {
 type ProcessStatus struct {
 	AbstractStatus
 	RealName string `json:"realName"`
-	ProcId   int32  `json:"procId"`
+	ProcID   int32  `json:"procId"`
 }
 
 // DefaultServerPort is DefaultServerPort

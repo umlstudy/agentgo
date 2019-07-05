@@ -8,10 +8,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func SendPostWithJson(any interface{}, url string) error {
-	return sendJson("POST", any, url)
+// SendPostWithJSON is SendPostWithJSON
+func SendPostWithJSON(any interface{}, url string) error {
+	return sendJSON("POST", any, url)
 }
 
+// SendBytes is SendBytes
 func SendBytes(method string, byteArray []byte, url string) (*http.Response, error) {
 	// JSON 바이트를 전송
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(byteArray))
@@ -28,8 +30,8 @@ func SendBytes(method string, byteArray []byte, url string) (*http.Response, err
 	return resp, nil
 }
 
-func sendJson(method string, any interface{}, url string) error {
-	jsonBytes, err := ConvertObjectToJsonBytes(any)
+func sendJSON(method string, any interface{}, url string) error {
+	jsonBytes, err := ConvertObjectToJSONBytes(any)
 	if err != nil {
 		return errors.Wrap(err, "sendJson")
 	}
@@ -46,8 +48,9 @@ func sendJson(method string, any interface{}, url string) error {
 	return nil
 }
 
-func ResponseToJson(w http.ResponseWriter, object interface{}) error {
-	js, err := ConvertObjectToJsonBytes(object)
+// ResponseToJSON is ResponseToJSON
+func ResponseToJSON(w http.ResponseWriter, object interface{}) error {
+	js, err := ConvertObjectToJSONBytes(object)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err

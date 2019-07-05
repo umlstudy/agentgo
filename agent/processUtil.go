@@ -34,7 +34,7 @@ func findMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 				if pid == 0 {
 					wl = common.ERROR
 				}
-				processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{Id: procNamePart, Name: procName, WarningLevel: wl, AlarmCondition: ac}, RealName: procNamePart, ProcId: pid})
+				processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{ID: procNamePart, Name: procName, WarningLevel: wl, AlarmCondition: ac}, RealName: procNamePart, ProcID: pid})
 				continue
 			}
 		}
@@ -51,7 +51,7 @@ func findMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 		if !found {
 			acwlcc := alarmConditionWithWarningLevelChangeConditionMap[procNamePart]
 			ac := acwlcc.AlarmCondition
-			processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{Id: procNamePart, Name: procNamePart, WarningLevel: common.ERROR, AlarmCondition: ac}, RealName: procNamePart, ProcId: 0})
+			processStatuses = append(processStatuses, common.ProcessStatus{AbstractStatus: common.AbstractStatus{ID: procNamePart, Name: procNamePart, WarningLevel: common.ERROR, AlarmCondition: ac}, RealName: procNamePart, ProcID: 0})
 		}
 	}
 
@@ -65,7 +65,7 @@ func checkAliveProcessStatuses(pss []common.ProcessStatus, procNameParts []strin
 
 	var newPss []common.ProcessStatus
 	for _, ps := range pss {
-		if ps.ProcId < 1 {
+		if ps.ProcID < 1 {
 			newPssTmp, err := findMatchedPids(procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 			if err != nil {
 				return nil, errors.Wrap(err, "FindMatchedPids failed #5")
@@ -77,16 +77,16 @@ func checkAliveProcessStatuses(pss []common.ProcessStatus, procNameParts []strin
 
 	if newPss == nil {
 		for _, ps := range pss {
-			proc, err := process.NewProcess(int32(ps.ProcId))
+			proc, err := process.NewProcess(int32(ps.ProcID))
 			if err != nil {
-				ps.ProcId = 0
+				ps.ProcID = 0
 			} else {
 				procName, err := proc.Name()
 				if err != nil {
-					ps.ProcId = 0
+					ps.ProcID = 0
 				} else {
 					if strings.Compare(ps.RealName, procName) != 0 {
-						ps.ProcId = 0
+						ps.ProcID = 0
 					}
 				}
 			}

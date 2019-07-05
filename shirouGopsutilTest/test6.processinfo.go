@@ -8,6 +8,7 @@ import (
 	common "github.com/umlstudy/serverMonitor/common"
 )
 
+// ProcessStatus is ProcessStatus
 type ProcessStatus = common.ProcessStatus
 
 func printProcess() {

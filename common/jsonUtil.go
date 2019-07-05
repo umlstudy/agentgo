@@ -9,7 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ReadJson(fileName string) (map[string]interface{}, error) {
+// ReadJSON is ReadJSON
+func ReadJSON(fileName string) (map[string]interface{}, error) {
 
 	jsonFile, err := os.Open(fileName)
 	if err != nil {
@@ -22,29 +23,31 @@ func ReadJson(fileName string) (map[string]interface{}, error) {
 		return nil, errors.Wrap(err, "readJson")
 	}
 
-	var anyJson map[string]interface{}
-	err = json.Unmarshal([]byte(byteValue), &anyJson)
+	var anyJSON map[string]interface{}
+	err = json.Unmarshal([]byte(byteValue), &anyJSON)
 	if err != nil {
 		return nil, errors.Wrap(err, "readJson")
 	}
 
-	return anyJson, nil
+	return anyJSON, nil
 }
 
-func ConvertObjectToJsonString(any interface{}) (string, error) {
-	jsonBytes, err := ConvertObjectToJsonBytes(any)
+// ConvertObjectToJSONString is ConvertObjectToJSONString
+func ConvertObjectToJSONString(any interface{}) (string, error) {
+	jsonBytes, err := ConvertObjectToJSONBytes(any)
 	if err != nil {
 		return "", errors.Wrap(err, "ConvertObjectToJsonString")
 	}
-	var prettyJsonBuf bytes.Buffer
-	err = json.Indent(&prettyJsonBuf, jsonBytes, "", "\t")
+	var prettyJSONBuf bytes.Buffer
+	err = json.Indent(&prettyJSONBuf, jsonBytes, "", "\t")
 	if err != nil {
 		return "", err
 	}
 	return string(jsonBytes), nil
 }
 
-func ConvertObjectToJsonBytes(any interface{}) ([]byte, error) {
+// ConvertObjectToJSONBytes is ConvertObjectToJSONBytes
+func ConvertObjectToJSONBytes(any interface{}) ([]byte, error) {
 	jsonBytes, err := json.Marshal(any)
 	if err != nil {
 		return nil, errors.Wrap(err, "ConvertObjectToJsonBytes")
