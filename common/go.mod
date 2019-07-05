@@ -1,4 +1,4 @@
-module sejong.asia/serverMonitor/common
+module github.com/umlstudy/serverMonitor/common
 
 go 1.12
 
