@@ -38,17 +38,17 @@ func printProcess() {
 func test6() {
 	fmt.Printf("test start...\n")
 	// printProcess()
-	procNameParts := []string{"taskh", "supper"}
-	pss, err := common.FindMatchedPids(procNameParts)
-	if err != nil {
-		panic(err)
-	}
-	pss, err = common.CheckAliveProcessStatuses(pss, procNameParts)
-	if err != nil {
-		panic(err)
-	}
-	for _, ps := range pss {
-		fmt.Printf("%s %d\n", ps.RealName, ps.ProcId)
-	}
+	// procNameParts := []string{"taskh", "supper"}
+	// pss, err := common.FindMatchedPids(procNameParts)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// pss, err = common.CheckAliveProcessStatuses(pss, procNameParts)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// for _, ps := range pss {
+	// 	fmt.Printf("%s %d\n", ps.RealName, ps.ProcId)
+	// }
 	fmt.Printf("test end...\n")
 }
