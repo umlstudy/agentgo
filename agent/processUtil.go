@@ -26,8 +26,12 @@ func findMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 		if err != nil {
 			continue
 		}
+		cmdLine, err := proc.Cmdline()
+		if err != nil {
+			continue
+		}
 		for _, procNamePart := range procNameParts {
-			if strings.Contains(procName, procNamePart) {
+			if strings.Contains(procName, procNamePart) || strings.Contains(cmdLine, procNamePart) {
 				acwlcc := alarmConditionWithWarningLevelChangeConditionMap[procNamePart]
 				ac := acwlcc.AlarmCondition
 				wl := common.NORMAL

@@ -10,6 +10,7 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
+	process "github.com/shirou/gopsutil/process"
 )
 
 func printHardwareData() {
@@ -115,4 +116,28 @@ func test3() {
 	fmt.Printf("test start...\n")
 	printHardwareData()
 	fmt.Printf("test end...\n")
+
+	pids, err := process.Pids()
+	if err != nil {
+		panic(err)
+	}
+	if len(pids) == 0 {
+		panic(err)
+	}
+	for _, pid := range pids {
+		proc, err := process.NewProcess(int32(pid))
+		if err != nil {
+			panic(err)
+		}
+		procName, err := proc.Name()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(procName)
+		cmdLine, err := proc.Cmdline()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(cmdLine)
+	}
 }
