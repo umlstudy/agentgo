@@ -10,6 +10,7 @@ export interface ProcessStatusContainerViewProps {
 class ProcessStatusContainerView extends React.Component<ProcessStatusContainerViewProps> {
 
     public shouldComponentUpdate(nextProps: ProcessStatusContainerViewProps) {
+        console.log("ProcessStatusContainerView - shouldComponentUpdate " + nextProps.serverInfo.processStatusesModified)
         return nextProps.serverInfo.processStatusesModified;
     }
 

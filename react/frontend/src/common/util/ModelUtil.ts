@@ -6,11 +6,11 @@ interface Identifier {
 
 export default class ArrayUtil {
 
-    public static findById<T extends Identifier>(ids:T[], idStr:string):T|null {
+    public static findById<T extends Identifier>(objs:T[], idStr:string):T|null {
         let idx:any;
-        for ( idx in ids) {
-            if ( ids[idx].id === idStr ) {
-                return ids[idx];
+        for ( idx in objs) {
+            if ( objs[idx].id === idStr ) {
+                return objs[idx];
             }
         }
         return null;

@@ -20,6 +20,7 @@ interface SystemStausViewLocalStates {
     timerInterval:NodeJS.Timeout;
     simpleMode:boolean;
 };
+
 class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemStausViewLocalStates> {
 
     public static getDerivedStateFromProps(nextProps: SystemStausViewLocalProps, prevState: SystemStausViewLocalStates):SystemStausViewLocalStates {
@@ -54,8 +55,10 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
 
     public shouldComponentUpdate(nextProps: SystemStausViewLocalProps, nextStates: SystemStausViewLocalStates):boolean {
         if ( nextStates.simpleMode !== this.state.simpleMode ) {
+            console.log("SystemStausView - shouldComponentUpdate true")
             return true;
         }
+        console.log("SystemStausView - shouldComponentUpdate false")
         return nextProps.serverInfoMapModified;
     }
 

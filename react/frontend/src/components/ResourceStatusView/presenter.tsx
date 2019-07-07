@@ -27,6 +27,7 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
     private canvas: any;
 
     public shouldComponentUpdate(nextProps: ResourceStatusViewProps) {
+        // console.log("ResourceStatusView - shouldComponentUpdate " + (this.props.tick !== nextProps.tick))
         return this.props.tick !== nextProps.tick;
     }
 

@@ -13,7 +13,6 @@ import ObjectUtil from '../../common/util/ObjectUtil'
 const TICK = 'counter/TICK';
 const REQUEST = 'counter/REQUEST';
 
-
 // 2.Action Creators
 const tick = createAction(TICK);
 const request = createAction(REQUEST, (si:ServerInfo)=>si);
@@ -85,7 +84,7 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
             // ResourceStatus
             const newSiRss = newSi.resourceStatuses;
             const oldRss = oldSi.resourceStatuses;
-            let resourceStatusesModifiedTmp = false;
+            oldSi.resourceStatusesModified = false;
             newSiRss.forEach((newSiRs:ResourceStatus)=>{
                 const foundOldRs = ModelUtil.findById(oldRss, newSiRs.id) as ResourceStatus;
                 if ( !!foundOldRs ) {
@@ -97,44 +96,42 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
                     // 이전에 없던 ResourceStatus
                     newSiRs.values = ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1);
                     oldRss.push(newSiRs);
-                    resourceStatusesModifiedTmp = true;
+                    oldSi.resourceStatusesModified = true;
                 }
             });
             const newOldRss = ModelUtil.removeNotExistIn(oldRss, newSiRss);
             oldSi.resourceStatuses = newOldRss;
             if ( newSiRss.length !== newOldRss.length ) {
-                resourceStatusesModifiedTmp = true;
+                oldSi.resourceStatusesModified = true;
             }
-            oldSi.resourceStatusesModified = resourceStatusesModifiedTmp;
         }
         {
             // ProcessStatus
             const newSiPss = newSi.processStatuses;
             const oldPss = oldSi.processStatuses;
 
-            let processStatusesModifiedTmp = false;
+            oldSi.processStatusesModified = false
+
             newSiPss.forEach((newSiPs:ProcessStatus)=>{
                 const foundOldPs = ModelUtil.findById(oldPss, newSiPs.id) as ProcessStatus;
                 if ( !!foundOldPs ) {
                     // 이전에 존재하던 ResourceStatus
                     if ( !ObjectUtil.isEquivalent(foundOldPs, newSiPs) ) {
                         ObjectUtil.copyProperties(newSiPs, foundOldPs);
-                        processStatusesModifiedTmp = true;
+                        oldSi.processStatusesModified = true;
                     }
                 } else {
                     // 이전에 없던 ResourceStatus
                     oldPss.push(newSiPs);
-                    processStatusesModifiedTmp = true;
+                    oldSi.processStatusesModified = true;
                 }
             });
             const newOldPss = ModelUtil.removeNotExistIn(oldPss, newSiPss);
             oldSi.processStatuses = newOldPss;
             if ( newSiPss.length !== newOldPss.length ) {
-                processStatusesModifiedTmp = true;
+                oldSi.processStatusesModified = true;
             }
-            oldSi.processStatusesModified = processStatusesModifiedTmp;
         }
-
     } else {
         // 이전에 없던 ServerInfo
         serverInfoMapModifiedTmp = true;
@@ -155,7 +152,7 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
     }
 }
 
-function applyRequest(state:StoreObject, action:any) {
+function applyRequest(state:StoreObject, action:any):StoreObject {
     const copiedNewStoreObject = copyOldStoreObjectAndApplyNew(state, action.payload);
     return copiedNewStoreObject;
 }
