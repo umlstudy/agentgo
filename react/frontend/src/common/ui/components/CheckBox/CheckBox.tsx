@@ -13,10 +13,14 @@ export default class CheckBox extends React.Component<CheckBoxProps> {
     // expo vector icons expo.github.io/vector-icons/
 
     public render() {
+        const checked = this.props.checked;
         const handleCheck = this.handleCheck.bind(this);
+        
+        console.log("CheckBox - render checked " + checked);
+
         return (
             <span>
-                <input type="checkbox" onChange={handleCheck} defaultChecked={this.props.checked}/>
+                <input type="checkbox" onChange={handleCheck} checked={checked}/>
                 { !!this.props.msg ? this.props.msg : '' }
             </span>
         );

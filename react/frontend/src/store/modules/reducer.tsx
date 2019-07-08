@@ -153,8 +153,23 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
 }
 
 function applyRequest(state:StoreObject, action:any):StoreObject {
-    const copiedNewStoreObject = copyOldStoreObjectAndApplyNew(state, action.payload);
-    return copiedNewStoreObject;
+    const storeObjects:StoreObject[] = [];
+    for ( const obj of action.payload ) {
+        storeObjects.push(copyOldStoreObjectAndApplyNew(state, obj));
+    } 
+    const so = storeObjects[0];
+    for ( const eleSo of storeObjects ) {
+        so.serverInfoMapModified = so.serverInfoMapModified || eleSo.serverInfoMapModified;
+        // tslint:disable-next-line: forin
+        for (const key in so.serverInfoMap) {
+            const si = so.serverInfoMap[key];
+            const eleSi = eleSo.serverInfoMap[key];
+            si.processStatusesModified = si.processStatusesModified || eleSi.processStatusesModified;
+            si.resourceStatusesModified = si.resourceStatusesModified || eleSi.resourceStatusesModified;
+        }
+    }
+
+    return so;
 }
 
 // Export Action Creators

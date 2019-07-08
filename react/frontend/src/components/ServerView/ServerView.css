@@ -1,15 +1,17 @@
 
-.ServerName {
+.ServerNamePart {
     font-family: "Segoe UI",Arial,sans-serif;
     margin: 0px 0;
-    display: block;
-    font-size: 1.3em;
     padding-bottom: 5px;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
-    font-weight: bold;
     color: #fff!important;
     background-color: #f44336!important;
+}
+
+.ServerName {
+    font-size: 1.3em;
+    font-weight: bold;
 }
 
 .ServerView {
