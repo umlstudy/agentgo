@@ -8,6 +8,7 @@ export interface ServerInfo extends AbstractStatus {
     processStatusesModified:boolean;
     resourceStatuses: ResourceStatus[];
     processStatuses: ProcessStatus[];
+    isRunning:boolean;
 }
 
 export type ServerInfoMap = Record<string, ServerInfo>;

@@ -1,10 +1,9 @@
 import { connect } from 'react-redux';
 import GlobalState from 'src/model/GlobalState';
-import { ServerViewProps } from '../ServerView/presenter';
 import ResourceStatusContainerView from './presenter';
 
-const mapStateToProps = (globalState: GlobalState, ownerProps:ServerViewProps) => {
-    const newSi = globalState.reducer.serverInfoMap[ownerProps.serverInfo.id]
+const mapStateToProps = (globalState: GlobalState, props:any) => {
+    const newSi = globalState.reducer.serverInfoMap[props.serverInfo.id]
     return {
         serverInfo:newSi
     };

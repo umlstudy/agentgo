@@ -6,7 +6,17 @@
     margin-inline-start: 0px;
     margin-inline-end: 0px;
     color: #fff!important;
-    background-color: #f44336!important;
+    background-color: #542c29!important;
+}
+
+.ServerNamePartNotRunning {
+    font-family: "Segoe UI",Arial,sans-serif;
+    margin: 0px 0;
+    padding-bottom: 5px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    color: #fff!important;
+    background-color: #eb1000!important;
 }
 
 .ServerName {

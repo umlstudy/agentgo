@@ -25,6 +25,7 @@ interface SystemStausViewLocalStates {
 class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemStausViewLocalStates> {
 
     public static getDerivedStateFromProps(nextProps: SystemStausViewLocalProps, prevState: SystemStausViewLocalStates):SystemStausViewLocalStates {
+        console.log("SystemStausView - getDerivedStateFromProps ");
         if ( !prevState.timerInterval ) {
             const timerInterval = setInterval(() => {
                 nextProps.tick();
@@ -44,7 +45,7 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
         Axios.get(Constants.GATEWAY_URL)
             .then((response)=>{
                 if ( response.data.length > 0 ) {
-                    console.log("SystemStausView - requestDateFromServer si size " + response.data.length);
+                    // console.log("SystemStausView - requestDateFromServer si size " + response.data.length);
                     nextProps.request(response.data);
                 }
             });
@@ -66,6 +67,9 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
     public render() {
         const serverInfoMap = this.props.serverInfoMap;
         const serverInfos:ServerInfo[] = ArrayUtil.json2Array(serverInfoMap);
+
+        console.log("SystemStausView - render ");
+
         return (
             <div>
                 {this.renderServerViews(serverInfos)}

@@ -18,5 +18,4 @@ const mapDispatchProps = (dispatch: any) => {
     };
 };
 
-
 export default connect(mapStateToProps, mapDispatchProps)(SystemStausView);

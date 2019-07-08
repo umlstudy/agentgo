@@ -9,12 +9,14 @@ import './ServerView.css';
 export interface ServerViewProps {
     serverInfo:ServerInfo;
     simpleMode:boolean;
+    isRunning:boolean;
 }
 
 // tslint:disable-next-line: interface-name
 interface ServerViewLocalStates {
     simpleMode:boolean;
     fireEventFromServerView:boolean;
+    isRunning:boolean;
 };
 class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates> {
 
@@ -23,12 +25,14 @@ class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates>
         if ( prevState.fireEventFromServerView ) {
             return {
                 ...prevState,
+                isRunning:nextProps.isRunning,
                 fireEventFromServerView:false
             }
         } else {
             return {
                 ...prevState,
                 simpleMode:nextProps.simpleMode,
+                isRunning:nextProps.isRunning,
                 fireEventFromServerView:false
             }
         }
@@ -36,11 +40,24 @@ class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates>
 
     public state:ServerViewLocalStates = {
         simpleMode:true,
+        isRunning:true,
         fireEventFromServerView:false
     }
 
     public shouldComponentUpdate(nextProps: ServerViewProps, nextStates: ServerViewLocalStates):boolean {
-        console.log("ServerView - shouldComponentUpdate true");
+        // if ( this.state.simpleMode !== nextStates.simpleMode ) {
+        //     console.log("ServerView - shouldComponentUpdate true");
+        //     return true;
+        // } else {
+        //     const sid = nextProps.serverInfo.id;
+        //     const currIsRunning = this.props.serverInfoMap[sid];
+        //     const nextIsRunning = nextProps.serverInfoMap[sid];
+        //     if ( currIsRunning !== nextIsRunning ) {
+        //         console.log("ServerView - shouldComponentUpdate true");
+        //         return true;
+        //     }
+        // }
+        console.log("ServerView - shouldComponentUpdate false");
         return true;
     }
 
@@ -53,7 +70,7 @@ class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates>
 
         return (
             <div className="ServerView">
-                <div className="ServerNamePart">
+                <div className={ this.props.serverInfo.isRunning ? "ServerNamePart" :"ServerNamePartNotRunning" }>
                     <span className="ServerName">
                         {this.props.serverInfo.name}
                     </span><CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={simpleMode}/>
