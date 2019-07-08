@@ -12,10 +12,10 @@ class ResourceStatusContainerView extends React.Component<ResourceStatusContaine
 
     public shouldComponentUpdate(nextProps: ResourceStatusContainerViewProps) {
         if ( this.props.simpleMode !== nextProps.simpleMode ) {
-            console.log("ResourceStatusContainerView - shouldComponentUpdate true")
+            console.log("ResourceStatusContainerView - shouldComponentUpdate true");
             return true;
         }
-        console.log("ResourceStatusContainerView - shouldComponentUpdate " + nextProps.serverInfo.resourceStatusesModified)
+        console.log("ResourceStatusContainerView - shouldComponentUpdate " + nextProps.serverInfo.resourceStatusesModified);
         return nextProps.serverInfo.resourceStatusesModified;
     }
 

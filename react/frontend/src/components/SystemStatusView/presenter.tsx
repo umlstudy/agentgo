@@ -5,6 +5,7 @@ import ArrayUtil from 'src/common/util/ArrayUtil';
 import * as Constants from 'src/Constants';
 import { ServerInfo, ServerInfoMap } from 'src/model/ServerInfo';
 import ServerView from '../ServerView';
+import './SystemStatusView.css'
 
 // tslint:disable-next-line:interface-name
 interface SystemStausViewLocalProps {
@@ -55,10 +56,10 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
 
     public shouldComponentUpdate(nextProps: SystemStausViewLocalProps, nextStates: SystemStausViewLocalStates):boolean {
         if ( nextStates.simpleMode !== this.state.simpleMode ) {
-            console.log("SystemStausView - shouldComponentUpdate true")
+            console.log("SystemStausView - shouldComponentUpdate true");
             return true;
         }
-        console.log("SystemStausView - shouldComponentUpdate false")
+        console.log("SystemStausView - shouldComponentUpdate " + nextProps.serverInfoMapModified);
         return nextProps.serverInfoMapModified;
     }
 
@@ -83,8 +84,8 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
         const checkBoxClick = this.checkBoxClick.bind(this);
         return (
             <>
-                <div>
-                    <CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={this.state.simpleMode}/>
+                <div className="SystemStatusView-header">
+                    <span className="SystemStatusView-title">Server Monitor</span><CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={this.state.simpleMode}/>
                 </div>
                 <div>
                     {serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (

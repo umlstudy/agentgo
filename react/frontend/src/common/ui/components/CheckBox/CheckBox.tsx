@@ -15,10 +15,10 @@ export default class CheckBox extends React.Component<CheckBoxProps> {
     public render() {
         const handleCheck = this.handleCheck.bind(this);
         return (
-            <div>
+            <span>
                 <input type="checkbox" onChange={handleCheck} defaultChecked={this.props.checked}/>
                 { !!this.props.msg ? this.props.msg : '' }
-            </div>
+            </span>
         );
     }
 

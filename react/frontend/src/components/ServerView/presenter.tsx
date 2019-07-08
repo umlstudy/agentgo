@@ -12,7 +12,7 @@ export interface ServerViewProps {
 class ServerView extends React.Component<ServerViewProps> {
 
     public shouldComponentUpdate(nextProps: ServerViewProps, nextStates: any):boolean {
-        console.log("ServerView - shouldComponentUpdate true")
+        console.log("ServerView - shouldComponentUpdate true");
         return true;
     }
 

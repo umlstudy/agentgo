@@ -1,0 +1,10 @@
+.SystemStatusView-header {
+  background-color: #222;
+  padding: 10px;
+  color: white;
+}
+
+.SystemStatusView-title {
+  font-size: 2.0em;
+  font-weight: bold;
+}
