@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/cpu"
@@ -95,6 +96,9 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 		return nil, errors.Wrap(err, "partition info read failed")
 	}
 	for i, ptn := range ptns {
+		if strings.Contains(ptn.Mountpoint, "/var/lib/docker/aufs") {
+			continue
+		}
 		diskStat, err := disk.Usage(ptn.Mountpoint)
 		if err != nil {
 			return nil, errors.Wrap(err, "disk info read failed")
@@ -120,7 +124,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 
 	acwwlcc = alarmConditionWithWarningLevelChangeConditionMap["host"]
 	ac = acwwlcc.AlarmCondition
-	serverInfo := &common.ServerInfo{ID: hostStat.Hostname, Name: fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
+	serverInfo := &common.ServerInfo{ID: hostStat.Hostname, Name: fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), AlarmCondition: ac, IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
 
 	return serverInfo, nil
 }

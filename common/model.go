@@ -36,8 +36,9 @@ type ResourceStatus struct {
 
 // ServerInfo is ServerInfo
 type ServerInfo struct {
-	ID               string           `json:"id"`
-	Name             string           `json:"name"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	AlarmCondition
 	IsRunning        bool             `json:"isRunning"`
 	ResourceStatuses []ResourceStatus `json:"resourceStatuses"`
 	ProcessStatuses  []ProcessStatus  `json:"processStatuses"`

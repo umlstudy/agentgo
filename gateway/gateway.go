@@ -37,14 +37,10 @@ func responseServerInfos(w http.ResponseWriter, r *http.Request) {
 var lastAlarmTimes = map[string]uint64{}
 
 func warningIfNeededTmp(as common.AbstractStatus, ID string) (needAlarm bool) {
-	if as.WarningLevel == common.ERROR || as.WarningLevel == common.WARNING {
+	if as.WarningLevel == common.ERROR {
 		if as.ResendAlarmLastSendAfter > 0 {
-			// 유효한 알람 발송 정보일 경우
-			now := uint64(time.Now().Unix())
-			lastResendBaseTime := (lastAlarmTimes[ID] + as.SendAlarmOccuredAfter + as.ResendAlarmLastSendAfter + (60 * 5))
-
-			if lastResendBaseTime < now {
-				lastAlarmTimes[ID] = now
+			judged := judgeAndSetLastResendBaseTime(ID, as.AlarmCondition)
+			if judged {
 				return true
 			}
 		}
@@ -52,34 +48,59 @@ func warningIfNeededTmp(as common.AbstractStatus, ID string) (needAlarm bool) {
 	return false
 }
 
+func judgeAndSetLastResendBaseTime(lastAlarmTimesKey string, ac common.AlarmCondition) bool {
+	// 유효한 알람 발송 정보일 경우
+	now := uint64(time.Now().Unix())
+	lastResendBaseTime := (lastAlarmTimes[lastAlarmTimesKey] + ac.SendAlarmOccuredAfter + ac.ResendAlarmLastSendAfter + (60 * 5))
+	if lastResendBaseTime < now {
+		lastAlarmTimes[lastAlarmTimesKey] = now
+		return true
+	}
+	return false
+}
+
 func warningIfNeeded(si common.ServerInfo) {
 	var alarmMessages bytes.Buffer
 
-	// 1.
+	// 1.1
 	needAlarm := !si.IsRunning
 	if !si.IsRunning {
-		alarmMessages.WriteString("system died.")
+		judged := judgeAndSetLastResendBaseTime("host", si.AlarmCondition)
+		if judged {
+			alarmMessages.WriteString("system died.")
+		}
 	}
 
+	// 1.2
 	for _, rs := range si.ResourceStatuses {
 		as := rs.AbstractStatus
-		needAlarm = needAlarm || warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, rs.ID))
-		if as.WarningLevel == common.WARNING || as.WarningLevel == common.ERROR {
+		currNeedAlarm := warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, rs.ID))
+		needAlarm = needAlarm || currNeedAlarm
+		if as.WarningLevel == common.WARNING {
+			alarmMessages.WriteString(fmt.Sprintf(", resource warning (%s)", rs.Name))
+		}
+		if as.WarningLevel == common.ERROR {
 			alarmMessages.WriteString(fmt.Sprintf(", resource error (%s)", rs.Name))
 		}
 	}
 
+	// 1.3
 	for _, ps := range si.ProcessStatuses {
 		as := ps.AbstractStatus
-		needAlarm = needAlarm || warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, ps.ID))
-		if as.WarningLevel == common.WARNING || as.WarningLevel == common.ERROR {
+		currNeedAlarm := warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, ps.ID))
+		needAlarm = needAlarm || currNeedAlarm
+		if as.WarningLevel == common.WARNING {
+			alarmMessages.WriteString(fmt.Sprintf(", resource warning (%s)", ps.Name))
+		}
+		if as.WarningLevel == common.ERROR {
 			alarmMessages.WriteString(fmt.Sprintf(", resource error (%s)", ps.Name))
 		}
 	}
 
+	// 2
 	if needAlarm {
 		// 알람 실행
-		// fmt.Printf("alarm %s\n", alarmMessages.String())
+		fmt.Printf("--\n--\n--\n-- ALARM - %s\nalarm %s\n", time.Now(), alarmMessages.String())
 	}
 }
 

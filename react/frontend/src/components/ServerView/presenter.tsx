@@ -15,49 +15,34 @@ export interface ServerViewProps {
 // tslint:disable-next-line: interface-name
 interface ServerViewLocalStates {
     simpleMode:boolean;
-    fireEventFromServerView:boolean;
-    isRunning:boolean;
+    fireEventFromThisView:boolean;
 };
+
 class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates> {
 
     public static getDerivedStateFromProps(nextProps: ServerViewProps, prevState: ServerViewLocalStates):ServerViewLocalStates {
         console.log("ServerView - getDerivedStateFromProps called");
-        if ( prevState.fireEventFromServerView ) {
+        if ( prevState.fireEventFromThisView ) {
             return {
                 ...prevState,
-                isRunning:nextProps.isRunning,
-                fireEventFromServerView:false
+                fireEventFromThisView:false
             }
         } else {
             return {
                 ...prevState,
                 simpleMode:nextProps.simpleMode,
-                isRunning:nextProps.isRunning,
-                fireEventFromServerView:false
+                fireEventFromThisView:false
             }
         }
     }
 
     public state:ServerViewLocalStates = {
         simpleMode:true,
-        isRunning:true,
-        fireEventFromServerView:false
+        fireEventFromThisView:false
     }
 
     public shouldComponentUpdate(nextProps: ServerViewProps, nextStates: ServerViewLocalStates):boolean {
-        // if ( this.state.simpleMode !== nextStates.simpleMode ) {
-        //     console.log("ServerView - shouldComponentUpdate true");
-        //     return true;
-        // } else {
-        //     const sid = nextProps.serverInfo.id;
-        //     const currIsRunning = this.props.serverInfoMap[sid];
-        //     const nextIsRunning = nextProps.serverInfoMap[sid];
-        //     if ( currIsRunning !== nextIsRunning ) {
-        //         console.log("ServerView - shouldComponentUpdate true");
-        //         return true;
-        //     }
-        // }
-        console.log("ServerView - shouldComponentUpdate false");
+        console.log("ServerView - shouldComponentUpdate true");
         return true;
     }
 
@@ -87,7 +72,7 @@ class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates>
         this.setState({
             ...this.state,
             simpleMode: checkbox,
-            fireEventFromServerView:true
+            fireEventFromThisView:true
         });
     }
 };

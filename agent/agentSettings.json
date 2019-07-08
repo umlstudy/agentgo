@@ -2,38 +2,60 @@
     "procNameParts":["java", "abc", "cmd", "rrss", "xd"],
     "alarmConditionWithWarningLevelChangeConditionMap":{
         "host": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000
         },
         "cpu": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100,
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000,
             "warningLevelChangeConditionMap":{
-                "WARNING":{
+                "ERROR":{
                     "conditionType":"Greater",
-                    "value":10
+                    "value":5
                 }
             }
         },
         "mem": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000,
+            "warningLevelChangeConditionMap":{
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":5
+                }
+            }
         },
         "disk1": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000,
+            "warningLevelChangeConditionMap":{
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":5
+                }
+            }
         },
         "disk2": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000,
+            "warningLevelChangeConditionMap":{
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":5
+                }
+            }
         },
         "disk3": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000
         },
         "disk4": {
-            "sendAlarmOccuredAfter":10,
-            "resendAlarmLastSendAfter":100
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000
+        },
+        "rrss": {
+            "sendAlarmOccuredAfter":1,
+            "resendAlarmLastSendAfter":100000
         }
     }
 }
