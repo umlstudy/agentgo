@@ -2,7 +2,7 @@ import { ProcessStatus } from './ProcessStatus';
 import { ResourceStatus } from './ResourceStatus';
 import { ServerInfoMap } from "./ServerInfo";
 
-export const serverInfoMap:ServerInfoMap = {
+export const serverInfoMap1:ServerInfoMap = {
     "aaaa":{
         id:"aaaa",
         name:"aaaa",

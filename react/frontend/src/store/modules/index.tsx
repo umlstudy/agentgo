@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import counter from './reducer';
+import monitor from './reducer';
 
 export default combineReducers({
-    reducer:counter
+    reducer:monitor
 });

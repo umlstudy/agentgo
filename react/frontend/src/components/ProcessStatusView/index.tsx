@@ -3,7 +3,7 @@ import ProcessStatusView from './presenter';
 
 // const mapStateToProps = (state: any) => {
 //     return {
-//         tick: state.counter.tick,
+//         tick: state.monitor.tick,
 //     };
 // };
 

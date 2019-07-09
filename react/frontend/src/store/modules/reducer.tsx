@@ -9,8 +9,8 @@ import ModelUtil from '../../common/util/ModelUtil'
 import ObjectUtil from '../../common/util/ObjectUtil'
 
 // 1.Actions
-const TICK = 'counter/TICK';
-const REQUEST = 'counter/REQUEST';
+const TICK = 'monitor/TICK';
+const REQUEST = 'monitor/REQUEST';
 
 // 2.Action Creators
 const tick = createAction(TICK);
@@ -18,31 +18,36 @@ const request = createAction(REQUEST, (si:ServerInfo)=>si);
 
 // 3.Reducer
 // 3.1.  Ininial State
+// const initialState:StoreObject = {
+// // tslint:disable-next-line: object-literal-sort-keys
+//     tick : 0,
+//     serverInfoMap:{
+//         "aaaa":{
+//             id:"aaaa",
+//             name:"aaaa",
+//             resourceStatusesModified:false,
+//             processStatusesModified:false,
+//             resourceStatuses: [
+//                 { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+//                 { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+//                 { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+//                 { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+//                 { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
+//             ],
+//             processStatuses: [
+//                 { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
+//             ],
+//             isRunning:true
+//         },
+//     },
+//     serverInfoMapModified:false
+// };
+
 const initialState:StoreObject = {
-    num: 92,
-// tslint:disable-next-line: object-literal-sort-keys
     tick : 0,
-    serverInfoMap:{
-        "aaaa":{
-            id:"aaaa",
-            name:"aaaa",
-            resourceStatusesModified:false,
-            processStatusesModified:false,
-            resourceStatuses: [
-                { max:100, min:1, name:"cpu", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Memory", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk1", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk2", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
-                { max:100, min:1, name:"Disk3", value:41, values:ArrayUtil.getArrayWithLimitedLength(GRAHP_VALUES_CNT+1)} as ResourceStatus,
-            ],
-            processStatuses: [
-                { id:'acc', name:'sdf', realName:'dsaf', procId:100 } as ProcessStatus,
-            ],
-            isRunning:true
-        },
-    },
+    serverInfoMap:{},
     serverInfoMapModified:false
-};
+}
 
 const reducer= handleActions({
     [TICK]:applyTick,
@@ -58,14 +63,15 @@ function applyTick(state:StoreObject, action:any) {
     Object.keys(newState.serverInfoMap).map((key) => {
         const si = newState.serverInfoMap[key];
         si.resourceStatuses.map((rs:ResourceStatus)=>{
-            if ( (rs.values as any).length === 0 ) {
-                (rs.values as any).push(0);
+            if ( rs.values.length === 0 ) {
+                rs.values.push(0);
             }
-            if( key === 'aaaa') {
-                (rs.values as any).push(Math.floor(Math.random()*1000)%20+60);
-            } else {
-                (rs.values as any).push(rs.value);
-            }
+            // if( key === 'aaaa') {
+            //     rs.values.push(Math.floor(Math.random()*1000)%20+60);
+            // } else {
+            //     rs.values.push(rs.value);
+            // }
+            rs.values.push(rs.value);
         });
     })
 
@@ -146,7 +152,6 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
 
     return {
         ...oldStoreObject, 
-        num : oldStoreObject.num - 1,
         serverInfoMap:oldServerInfoMap,
         serverInfoMapModified: serverInfoMapModifiedTmp
     }

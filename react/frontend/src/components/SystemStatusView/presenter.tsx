@@ -92,8 +92,8 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
                     <span className="SystemStatusView-title">Server Monitor</span><CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={this.state.simpleMode}/>
                 </div>
                 <div>
-                    {serverInfos.map((value: ServerInfo, index: number, array: ServerInfo[]) => (
-                        <ServerView serverInfo={value} key={index} simpleMode={this.state.simpleMode}/>
+                    {serverInfos.map((value: ServerInfo/* , index: number, array: ServerInfo[] */) => (
+                        <ServerView serverInfo={value} key={value.id} simpleMode={this.state.simpleMode}/>
                     ))}
                 </div>
             </>
