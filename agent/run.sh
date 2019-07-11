@@ -1,6 +1,7 @@
 #/bin/bash
 # sed 's/\r//g' run.sh | bash -
 cp agentSettings.json agentSettings.json_ 
+git checkout agentSettings.json
 git pull
 go build
 kill `ps -ef | grep './agent -host mac.sejong.asia &' | awk '{print $2}'`
