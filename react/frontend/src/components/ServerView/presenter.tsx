@@ -60,7 +60,7 @@ class ServerView extends React.Component<ServerViewProps, ServerViewLocalStates>
                         {this.props.serverInfo.name}
                     </span><CheckBox msg="간단히" checkBoxClick={checkBoxClick} checked={simpleMode}/>
                 </div>
-                <div>
+                <div className="ServerViewBody">
                     <ResourceStatusContainerView serverInfo={this.props.serverInfo} simpleMode={simpleMode}/>
                     { !!this.props.serverInfo.processStatuses ? <ProcessStatusContainerView serverInfo={this.props.serverInfo} simpleMode={simpleMode}/>: ''}
                 </div>

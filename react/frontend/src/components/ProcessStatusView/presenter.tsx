@@ -20,8 +20,8 @@ class ProcessStatusView extends React.Component<ProcessStatusViewProps> {
         return (
             <div className="ProcessStatusView">
                 { processStatus.procId > 0 ? 
-                    <span className="running">{processStatus.realName}</span>: 
-                    <span className="stopped">{processStatus.realName}</span>
+                    <div className="running">{processStatus.realName}</div>: 
+                    <div className="stopped">{processStatus.realName}</div>
                 }
             </div>
         );

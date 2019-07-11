@@ -7,11 +7,19 @@
 }
 
 .running {
-    color:green;
+    display: inline-block;
+    background-color:rgb(14, 117, 14);
+    color:white;
     font-weight: bold;
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px / 5px;
 }
 
 .stopped {
-    color:red;
+    display: inline-block;
+    background-color:rgb(185, 8, 8);
+    color:white;
     font-weight: bold;
+    padding: 2px 5px 2px 5px;
+    border-radius: 5px / 5px;
 }

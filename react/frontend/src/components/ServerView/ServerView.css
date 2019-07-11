@@ -25,5 +25,10 @@
 }
 
 .ServerView {
-    background-color: #cccccc;
+    background-color: #e7e7e7;
+}
+
+.ServerViewBody {
+    background-color: #e7e7e7;
+    padding : 1px 3px 3px 3px;
 }
