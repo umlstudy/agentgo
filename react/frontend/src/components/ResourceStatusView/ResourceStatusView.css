@@ -3,4 +3,9 @@
     display: inline-block;
     margin-left: 5px;
     margin-right: 5px;
+    border-radius: 5px / 5px;
+}
+
+.canvasArea {
+    border-radius: 5px / 5px;
 }

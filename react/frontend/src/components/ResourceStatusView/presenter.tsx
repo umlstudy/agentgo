@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ContextUtil from 'src/common/ui/util/ContextUtil';
 import { GRAHP_VALUES_CNT } from 'src/Constants';
+import { WarningLevel } from 'src/model/enums/WarningLevel';
 import { ResourceStatus } from '../../model/ResourceStatus';
 import './ResourceStatusView.css'
 
@@ -11,13 +12,17 @@ export interface ResourceStatusViewProps {
     simpleMode:boolean;
 }
 
-const WIDHT:number=150;
-const HEIGHT:number=100;
+const WIDHT:number=120;
+const HEIGHT:number=40;
 const GRID:number=10;
 const BACKGROUND_COLOR:string="#009900";
 const GRID_COLOR:string="#000000";
 const CHART_LINE_COLOR:string="#00ffff";
 const CHART_BG_COLOR:string="#8ED6FF";
+const CHART_LINE_COLOR_ERROR:string="#dd2233";
+const CHART_BG_COLOR_ERROR:string="#cc4455";
+const CHART_LINE_COLOR_WARNING:string="#ddcc33";
+const CHART_BG_COLOR_WARNING:string="#ccbb55";
 const CHART_ALPHA:number=0.5;
 const FONT_NAME:string='20px san-serif';
 const TEXT_HEIGHT:number=ContextUtil.measureFontHeight(FONT_NAME, '95%').height;
@@ -43,7 +48,7 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
             return (
                 <div className="ResourceStatusView">
                     {resourceStatus.name}<br />
-                    <canvas
+                    <canvas className="canvasArea"
                         ref={(canvas) => { this.canvas = canvas; }}
                         width={WIDHT}
                         height={HEIGHT} />
@@ -78,16 +83,17 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
         
         // 2. grid
         ctx.strokeStyle = GRID_COLOR;
+        ctx.lineWidth = 1;
         ctx.beginPath();
         for (let x=0-tick;x<WIDHT;x+=GRID) {
             if ( x>=0 ) {
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, HEIGHT);
+                ctx.moveTo(x+0.5, 0);
+                ctx.lineTo(x+0.5, HEIGHT);
             }
         }
         for (let y=0;y<HEIGHT;y+=GRID) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(WIDHT, y);
+            ctx.moveTo(0, y+0.5);
+            ctx.lineTo(WIDHT, y+0.5);
         }
         ctx.stroke();
         
@@ -95,9 +101,21 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
         const resourceStatus = this.props.resourceStatus;
         const values = resourceStatus.values.slice();
         const valLen = values.length;
+        let chartLineColor = CHART_LINE_COLOR;
+        let chartBgColor = CHART_BG_COLOR;
+        const thisWl = this.props.resourceStatus.warningLevel;
+        if ( !!thisWl ) {
+            if ( thisWl === WarningLevel[WarningLevel.ERROR] ) {
+                chartLineColor = CHART_LINE_COLOR_ERROR;
+                chartBgColor = CHART_BG_COLOR_ERROR;
+            } else if ( thisWl === WarningLevel[WarningLevel.WARNING] ) {
+                chartLineColor = CHART_LINE_COLOR_WARNING;
+                chartBgColor = CHART_BG_COLOR_WARNING;
+            } 
+        }
         if ( valLen > 0 ) {
             ctx.beginPath();
-            ctx.strokeStyle = CHART_LINE_COLOR;
+            ctx.strokeStyle = chartLineColor;
             ctx.moveTo(WIDHT, this.getYposition(values, 1));
             for ( let i=2; i<=values.length; i++ ) {
                 const x = this.getXposition(i);
@@ -112,7 +130,7 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
             ctx.stroke();
 
             ctx.globalAlpha = CHART_ALPHA;
-            ctx.fillStyle=CHART_BG_COLOR;
+            ctx.fillStyle=chartBgColor;
             ctx.fill();
 
             // text
@@ -124,13 +142,13 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
     }
 
     private getYposition(values:number[], pos:number):number {
-        const yPixelDentisy = Math.floor(HEIGHT/100);
+        const yPixelDentisy = HEIGHT/100;
         const yPos = HEIGHT - (values[values.length-pos]*yPixelDentisy);
         return yPos;
     }
 
     private getXposition(pos:number):number {
-        const xPixelDentisy = Math.floor(WIDHT/GRAHP_VALUES_CNT);
+        const xPixelDentisy = WIDHT/GRAHP_VALUES_CNT;
         const xPos = WIDHT - ((pos-1) * xPixelDentisy);
         return xPos;
     }

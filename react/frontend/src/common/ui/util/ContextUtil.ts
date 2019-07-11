@@ -11,10 +11,12 @@ export default class ContextUtil {
     }
 
     public static drawCenterText(ctx:any, textHeight:number, text:string) {
-        const w = ctx.canvas.width;
-        const h = ctx.canvas.height;
+        const cw = ctx.canvas.width;
+        const ch = ctx.canvas.height;
         const textWidth = Math.floor(ctx.measureText(text ).width);
-        ctx.fillText(text , Math.floor((w/2) - (textWidth / 2)), Math.floor((h/2) - (textHeight / 2)));
+        const posX = Math.floor((cw/2) - (textWidth / 2));
+        const posY = Math.floor((ch/2) + (textHeight / 2));
+        ctx.fillText(text , posX, posY);
     }
 
     public static measureFontHeight(fontStyle:string, text:string):any {
