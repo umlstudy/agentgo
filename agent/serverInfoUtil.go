@@ -96,7 +96,7 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 		return nil, errors.Wrap(err, "partition info read failed")
 	}
 	for i, ptn := range ptns {
-		if strings.Contains(ptn.Mountpoint, "/var/lib/docker/aufs") {
+		if strings.Contains(ptn.Mountpoint, "/var/lib/docker") {
 			continue
 		}
 		diskStat, err := disk.Usage(ptn.Mountpoint)
