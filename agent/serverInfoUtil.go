@@ -60,7 +60,7 @@ func determineWarningLevelB(value uint32, wlcc common.WarningLevelChangeConditio
 	return false
 }
 
-func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
+func createServerInfo(hostId string, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
 
 	resourceStatuss := []common.ResourceStatus{}
 
@@ -122,9 +122,12 @@ func createServerInfo(pss []common.ProcessStatus, procNameParts []string, alarmC
 		return nil, errors.Wrap(err, "host info read failed")
 	}
 
+	if len(hostId) == 0 {
+		hostId = hostStat.Hostname
+	}
 	acwwlcc = alarmConditionWithWarningLevelChangeConditionMap["host"]
 	ac = acwwlcc.AlarmCondition
-	serverInfo := &common.ServerInfo{ID: hostStat.Hostname, Name: fmt.Sprintf("%s(%s)", hostStat.Hostname, hostStat.Platform), AlarmCondition: ac, IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
+	serverInfo := &common.ServerInfo{ID: hostId, Name: fmt.Sprintf("%s(%s)", hostId, hostStat.Platform), AlarmCondition: ac, IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
 
 	return serverInfo, nil
 }

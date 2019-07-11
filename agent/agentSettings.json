@@ -1,4 +1,5 @@
 {
+    "hostId":"",
     "procNameParts":["procName1"],
     "alarmConditionWithWarningLevelChangeConditionMap":{
         "host": {

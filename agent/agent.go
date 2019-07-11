@@ -22,6 +22,7 @@ const urlFormat string = "http://%s:%d/recvServerInfo"
 
 // AgentSettings is AgentSettings
 type AgentSettings struct {
+	HostId                                           string                                                          `json:"hostId"`
 	ProcNameParts                                    []string                                                        `json:"procNameParts"`
 	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeConditionMap"`
 }
@@ -48,13 +49,13 @@ func readJSON(fileName string) (*AgentSettings, error) {
 	return &as, nil
 }
 
-func createServerInfoAndRetry(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
-	si, err := createServerInfo(pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+func createServerInfoAndRetry(hostId string, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
+	si, err := createServerInfo(hostId, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 	retryCnt := 0
 	for err != nil && retryCnt < 3 {
 		fmt.Println(errors.Wrap(err, 2).ErrorStack())
 		time.Sleep(5 * time.Second)
-		si, err = createServerInfo(pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+		si, err = createServerInfo(hostId, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 	}
 	return si, err
 }
@@ -63,13 +64,13 @@ var logger *log.Logger
 
 func main() {
 
-	host := flag.String("host", "localhost", "ServerMonitory Gateway's host name or ip to gateway")
+	gatewayHost := flag.String("host", "localhost", "ServerMonitory Gateway's host name or ip to gateway")
 	port := flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
 	enableConsoleLogPtr := flag.Bool("enableConsoleLog", false, "Enable console log for ServerMonitory Gateway")
 	flag.Parse()
 
 	fmt.Printf("> Using port is %v\n", *port)
-	colorstring.Fprintf(ansi.NewAnsiStdout(), "[green][bold]> Target host is %v\n", *host)
+	colorstring.Fprintf(ansi.NewAnsiStdout(), "[green][bold]> Target host is %v\n", *gatewayHost)
 	fmt.Printf("> EnableConsoleLog is %v\n", *enableConsoleLogPtr)
 	fmt.Printf("> Reading agentSettings.json...\n")
 	as, err := readJSON("agentSettings.json")
@@ -96,21 +97,21 @@ func main() {
 		defer fpLog.Close()
 
 		logger = log.New(fpLog, "", logParam)
-		runMain(host, port, pss, as)
+		runMain(gatewayHost, port, pss, as)
 	} else {
 		logger = log.New(os.Stdout, "", logParam)
-		runMain(host, port, pss, as)
+		runMain(gatewayHost, port, pss, as)
 	}
 }
 
-func runMain(host *string, port *int, pss []common.ProcessStatus, as *AgentSettings) {
-	url := fmt.Sprintf(urlFormat, *host, *port)
+func runMain(gatewayHost *string, port *int, pss []common.ProcessStatus, as *AgentSettings) {
+	url := fmt.Sprintf(urlFormat, *gatewayHost, *port)
 	logger.Println("> Agent started...")
 	for true {
 
 		time.Sleep(5 * time.Second)
 
-		si, err := createServerInfoAndRetry(pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
+		si, err := createServerInfoAndRetry(as.HostId, pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 		if err != nil {
 			logger.Println(errors.Wrap(err, 2).ErrorStack())
 			panic(err)
