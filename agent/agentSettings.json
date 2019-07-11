@@ -1,61 +1,107 @@
 {
-    "procNameParts":["java", "abc", "cmd", "rrss", "xd"],
+    "procNameParts":["procName1"],
     "alarmConditionWithWarningLevelChangeConditionMap":{
         "host": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000
+            "resendAlarmLastSendAfter":86400
         },
         "cpu": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000,
+            "resendAlarmLastSendAfter":3600,
             "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
                 "ERROR":{
                     "conditionType":"Greater",
-                    "value":5
+                    "value":80
                 }
             }
         },
         "mem": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000,
+            "resendAlarmLastSendAfter":3600,
             "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
                 "ERROR":{
                     "conditionType":"Greater",
-                    "value":5
+                    "value":80
                 }
             }
         },
         "disk1": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000,
+            "resendAlarmLastSendAfter":86400,
             "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
                 "ERROR":{
                     "conditionType":"Greater",
-                    "value":5
+                    "value":90
                 }
             }
         },
         "disk2": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000,
+            "resendAlarmLastSendAfter":86400,
             "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
                 "ERROR":{
                     "conditionType":"Greater",
-                    "value":5
+                    "value":90
                 }
             }
         },
         "disk3": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000
+            "resendAlarmLastSendAfter":86400,
+            "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":90
+                }
+            }
         },
         "disk4": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000
+            "resendAlarmLastSendAfter":86400,
+            "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":90
+                }
+            }
         },
-        "rrss": {
+        "procName1": {
             "sendAlarmOccuredAfter":1,
-            "resendAlarmLastSendAfter":100000
+            "resendAlarmLastSendAfter":100000,
+            "warningLevelChangeConditionMap":{
+                "WARNING":{
+                    "conditionType":"Greater",
+                    "value":40
+                },
+                "ERROR":{
+                    "conditionType":"Greater",
+                    "value":90
+                }
+            }
         }
     }
 }
