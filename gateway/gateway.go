@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/k0kubun/go-ansi"
@@ -243,17 +245,35 @@ func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
 	}
 }
 
+var logger *log.Logger
+
 func main() {
+
 	var port = flag.Int("port", common.DefaultServerPort, "ServerMonitory Gateway's port no")
 	var enableDisplayPtr = flag.Bool("enableDisplay", false, "Enable display for ServerMonitory Gateway")
+	var enableConsoleLogPtr = flag.Bool("enableConsoleLog", false, "Enable console log for ServerMonitory Gateway")
 	flag.Parse()
 
 	enableDisplay = *enableDisplayPtr
-
 	fmt.Printf("> Using port is %v\n", *port)
 	fmt.Printf("> EnableDisplay is %v\n", enableDisplay)
+	fmt.Printf("> EnableConsoleLog is %v\n", *enableConsoleLogPtr)
 
-	webServerStart(*port)
+	const logParam = log.Ldate | log.Ltime | log.Lshortfile
+	if !*enableConsoleLogPtr {
+		fpLog, err := os.OpenFile("gateway.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			panic(err)
+		}
+		defer fpLog.Close()
+
+		logger = log.New(fpLog, "", logParam)
+		webServerStart(*port)
+	} else {
+		logger = log.New(os.Stdout, "", logParam)
+		webServerStart(*port)
+	}
+
 }
 
 func webServerStart(port int) {
@@ -267,11 +287,15 @@ func webServerStart(port int) {
 	mux.HandleFunc("/getServerInfos", responseServerInfos)     // 모니터UI로부터의 응답
 	mux.HandleFunc("/recvServerInfo", recvServerInfoFromAgent) // 에이전트로부터의 자료 수신
 
-	t := time.Now()
-	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
-	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> Waiting for agent or front end UI...\n")
-
-	ansi.CursorHide()
+	if enableDisplay {
+		t := time.Now()
+		colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Start at %s\n", t.Format("2006-01-02 15:04:05"))
+		colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> Waiting for agent or front end UI...\n")
+		ansi.CursorHide()
+	} else {
+		logger.Printf("ServerMonitory Gateway Start\n")
+		logger.Printf("Waiting for agent or front end UI...\n")
+	}
 
 	go runLoop(runLoopQuitChan)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
@@ -281,6 +305,12 @@ func webServerStart(port int) {
 	if err != nil {
 		panic(err)
 	}
-	colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
-	ansi.CursorShow()
+
+	if enableDisplay {
+		t := time.Now()
+		colorstring.Fprintf(ansi.NewAnsiStdout(), "[blue][bold]> ServerMonitory Gateway Stop at %s\n", t.Format("2006-01-02 15:04:05"))
+		ansi.CursorShow()
+	} else {
+		logger.Printf("ServerMonitory Gateway Stop\n")
+	}
 }
