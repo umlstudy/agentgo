@@ -1,5 +1,5 @@
 #/bin/bash
-# cat run.sh | sed s/^M//g | bash -
+# sed 's/\r//g' run.sh | bash -
 cp agentSettings.json agentSettings.json_ 
 git pull
 go build
