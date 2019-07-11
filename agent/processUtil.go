@@ -64,7 +64,7 @@ func findMatchedPids(procNameParts []string, alarmConditionWithWarningLevelChang
 
 func checkAliveProcessStatuses(pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) ([]common.ProcessStatus, error) {
 	if len(pss) < 1 {
-		return nil, errors.New("empty process statuses")
+		return []common.ProcessStatus{}, nil
 	}
 
 	var newPss []common.ProcessStatus
