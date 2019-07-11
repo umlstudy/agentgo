@@ -171,8 +171,10 @@ func (al *AnsiLine) inc() {
 }
 
 func (al *AnsiLine) reset() {
-	ansi.CursorUp(int(al.currentLine))
-	al.currentLine = 0
+	if al.currentLine > 0 {
+		ansi.CursorUp(int(al.currentLine))
+		al.currentLine = 0
+	}
 }
 
 var ansiLine = AnsiLine{}
@@ -192,7 +194,10 @@ func runLoop(runLoopQuitChan <-chan bool) {
 			notFinished = false
 			break
 		default:
-			ansiLine.reset()
+			if enableDisplay {
+				ansiLine.reset()
+			}
+
 			// 1.서버 상태 변경
 			if len(serverInfoMap) > 0 {
 				for _, si := range serverInfoMap {
