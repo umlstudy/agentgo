@@ -39,8 +39,18 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
     public render() {
         const resourceStatus = this.props.resourceStatus;
         if ( this.props.simpleMode ) {
+            const wl = resourceStatus.warningLevel;
+            let className = 'normal';
+            if ( !!wl ) {
+                if ( wl === WarningLevel[WarningLevel.ERROR] ) {
+                    className = 'error';
+                } else if ( wl === WarningLevel[WarningLevel.WARNING] ) {
+                    className = 'warning';
+                }
+            }
+            className = "ResourceStatusViewSimple " + className;
             return (
-                <div className="ResourceStatusView">
+                <div className={className}>
                     {resourceStatus.name}({resourceStatus.value}%)
                 </div>
             );
