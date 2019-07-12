@@ -184,7 +184,7 @@ var lastServerInfoRecvTimeMap = map[string]uint64{}
 var enableDisplay = false
 
 // var serverJudgeDiedTime = uint64(60*5) // 5분
-var serverJudgeDiedTime = uint64(20) // 20초
+var serverJudgeDiedTime = uint64(60) // 60초
 
 func runLoop(runLoopQuitChan <-chan bool) {
 	notFinished := true
@@ -307,7 +307,9 @@ func webServerStart(port int) {
 
 	// 종료 시그널 보냄
 	runLoopQuitChan <- true
+
 	if err != nil {
+		logger.Printf("panic error : %v\n", err)
 		panic(err)
 	}
 
