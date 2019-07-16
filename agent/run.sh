@@ -4,6 +4,6 @@ cp agentSettings.json agentSettings.json_
 git checkout agentSettings.json
 git pull
 go build
-kill `ps -ef | grep './agent -host mac.sejong.asia' | awk '{print $2}'`
+kill `ps -ef | grep './agent -host mac.sejong.asia' | grep -v grep | awk '{print $2}'`
 ./agent -host mac.sejong.asia &
 cp agentSettings.json_ agentSettings.json
