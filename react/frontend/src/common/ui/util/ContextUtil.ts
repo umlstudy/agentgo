@@ -19,6 +19,13 @@ export default class ContextUtil {
         ctx.fillText(text , posX, posY);
     }
 
+    public static drawHorizontalCenterText(ctx:any, posY:number, text:string) {
+        const cw = ctx.canvas.width;
+        const textWidth = Math.floor(ctx.measureText(text ).width);
+        const posX = Math.floor((cw/2) - (textWidth / 2));
+        ctx.fillText(text , posX, posY);
+    }
+
     public static measureFontHeight(fontStyle:string, text:string):any {
     
         const canvas = document.createElement("canvas");

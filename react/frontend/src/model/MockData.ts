@@ -4,6 +4,7 @@ import { ServerInfoMap } from "./ServerInfo";
 
 export const serverInfoMap1:ServerInfoMap = {
     "aaaa":{
+        sortOrder:111,
         id:"aaaa",
         name:"aaaa",
         resourceStatusesModified:true,

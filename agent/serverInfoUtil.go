@@ -60,7 +60,7 @@ func determineWarningLevelB(value uint32, wlcc common.WarningLevelChangeConditio
 	return false
 }
 
-func createServerInfo(hostId string, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
+func createServerInfo(hostId string, sortOrder uint32, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
 
 	resourceStatuss := []common.ResourceStatus{}
 
@@ -95,7 +95,7 @@ func createServerInfo(hostId string, pss []common.ProcessStatus, procNameParts [
 	if err != nil {
 		return nil, errors.Wrap(err, "partition info read failed")
 	}
-	for i, ptn := range ptns {
+	for _, ptn := range ptns {
 		if strings.Contains(ptn.Mountpoint, "/var/lib/docker") {
 			continue
 		}
@@ -104,7 +104,7 @@ func createServerInfo(hostId string, pss []common.ProcessStatus, procNameParts [
 			return nil, errors.Wrap(err, "disk info read failed")
 		}
 		diskUsed := uint32(diskStat.UsedPercent)
-		acwwlcc = alarmConditionWithWarningLevelChangeConditionMap[fmt.Sprintf("disk%d", i)]
+		acwwlcc = alarmConditionWithWarningLevelChangeConditionMap[diskStat.Path]
 		ac = acwwlcc.AlarmCondition
 		wl = determineWarningLevelA(diskUsed, acwwlcc.WarningLevelChangeConditionMap)
 		resourceStatuss = append(resourceStatuss, common.ResourceStatus{AbstractStatus: common.AbstractStatus{ID: diskStat.Path, Name: diskStat.Path, WarningLevel: wl, AlarmCondition: ac}, Min: 1, Max: 100, Value: diskUsed})
@@ -127,7 +127,7 @@ func createServerInfo(hostId string, pss []common.ProcessStatus, procNameParts [
 	}
 	acwwlcc = alarmConditionWithWarningLevelChangeConditionMap["host"]
 	ac = acwwlcc.AlarmCondition
-	serverInfo := &common.ServerInfo{ID: hostId, Name: fmt.Sprintf("%s(%s)", hostId, hostStat.Platform), AlarmCondition: ac, IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
+	serverInfo := &common.ServerInfo{ID: hostId, SortOrder: sortOrder, Name: fmt.Sprintf("%s(%s)", hostId, hostStat.Platform), AlarmCondition: ac, IsRunning: true, ResourceStatuses: resourceStatuss, ProcessStatuses: pss}
 
 	return serverInfo, nil
 }

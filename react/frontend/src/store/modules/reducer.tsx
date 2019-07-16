@@ -95,8 +95,9 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
                 const foundOldRs = ModelUtil.findById(oldRss, newSiRs.id) as ResourceStatus;
                 if ( !!foundOldRs ) {
                     // 이전에 존재하던 ResourceStatus
-                    if ( foundOldRs.value !== newSiRs.value) {
-                        foundOldRs.value = newSiRs.value;
+                    if ( !ObjectUtil.isEquivalent(foundOldRs, newSiRs) ) {
+                        ObjectUtil.copyProperties(newSiRs, foundOldRs);
+                        oldSi.resourceStatusesModified = true;
                     }
                 } else {
                     // 이전에 없던 ResourceStatus

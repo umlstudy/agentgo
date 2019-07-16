@@ -4,6 +4,7 @@ import { ResourceStatus } from './ResourceStatus';
 
 // tslint:disable-next-line:interface-name
 export interface ServerInfo extends AbstractStatus {
+    sortOrder:number;
     resourceStatusesModified:boolean;
     processStatusesModified:boolean;
     resourceStatuses: ResourceStatus[];

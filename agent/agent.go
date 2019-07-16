@@ -23,6 +23,7 @@ const urlFormat string = "http://%s:%d/recvServerInfo"
 // AgentSettings is AgentSettings
 type AgentSettings struct {
 	HostId                                           string                                                          `json:"hostId"`
+	SortOrder                                        uint32                                                          `json:"sortOrder"`
 	ProcNameParts                                    []string                                                        `json:"procNameParts"`
 	AlarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition `json:"alarmConditionWithWarningLevelChangeConditionMap"`
 }
@@ -49,13 +50,13 @@ func readJSON(fileName string) (*AgentSettings, error) {
 	return &as, nil
 }
 
-func createServerInfoAndRetry(hostId string, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
-	si, err := createServerInfo(hostId, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+func createServerInfoAndRetry(hostId string, sortOrder uint32, pss []common.ProcessStatus, procNameParts []string, alarmConditionWithWarningLevelChangeConditionMap map[string]common.AlarmConditionWithWarningLevelChangeCondition) (*common.ServerInfo, error) {
+	si, err := createServerInfo(hostId, sortOrder, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 	retryCnt := 0
 	for err != nil && retryCnt < 3 {
 		fmt.Println(errors.Wrap(err, 2).ErrorStack())
 		time.Sleep(5 * time.Second)
-		si, err = createServerInfo(hostId, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
+		si, err = createServerInfo(hostId, sortOrder, pss, procNameParts, alarmConditionWithWarningLevelChangeConditionMap)
 	}
 	return si, err
 }
@@ -109,9 +110,9 @@ func runMain(gatewayHost *string, port *int, pss []common.ProcessStatus, as *Age
 	logger.Println("> Agent started...")
 	for true {
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(10 * time.Second)
 
-		si, err := createServerInfoAndRetry(as.HostId, pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
+		si, err := createServerInfoAndRetry(as.HostId, as.SortOrder, pss, as.ProcNameParts, as.AlarmConditionWithWarningLevelChangeConditionMap)
 		if err != nil {
 			logger.Println(errors.Wrap(err, 2).ErrorStack())
 			panic(err)

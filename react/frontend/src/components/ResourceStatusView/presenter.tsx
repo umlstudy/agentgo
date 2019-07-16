@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as sprintf from 'sprintf';
 import ContextUtil from 'src/common/ui/util/ContextUtil';
 import { GRAHP_VALUES_CNT } from 'src/Constants';
 import { WarningLevel } from 'src/model/enums/WarningLevel';
@@ -24,8 +25,10 @@ const CHART_BG_COLOR_ERROR:string="#cc4455";
 const CHART_LINE_COLOR_WARNING:string="#ddcc33";
 const CHART_BG_COLOR_WARNING:string="#ccbb55";
 const CHART_ALPHA:number=0.5;
-const FONT_NAME:string='20px san-serif';
-const TEXT_HEIGHT:number=ContextUtil.measureFontHeight(FONT_NAME, '95%').height;
+const CENTER_FONT_SIZE_AND_NAME:string='15px san-serif';
+const CENTER_FONT_TEXT_HEIGHT:number=ContextUtil.measureFontHeight(CENTER_FONT_SIZE_AND_NAME, '95%').height;
+const TOP_FONT_SIZE_AND_NAME:string='12px san-serif';
+const TOP_FONT_TEXT_HEIGHT:number=ContextUtil.measureFontHeight(TOP_FONT_SIZE_AND_NAME, '95%').height;
 
 class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
 
@@ -57,7 +60,6 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
         } else {
             return (
                 <div className="ResourceStatusView">
-                    {resourceStatus.name}<br />
                     <canvas className="canvasArea"
                         ref={(canvas) => { this.canvas = canvas; }}
                         width={WIDHT}
@@ -146,8 +148,18 @@ class ResourceStatusView extends React.Component<ResourceStatusViewProps> {
             // text
             ctx.globalAlpha = 1;
             ctx.fillStyle = "#ffffff";
-            ctx.font =  FONT_NAME;
-            ContextUtil.drawCenterText(ctx, TEXT_HEIGHT, "" + values[valLen-1] + "%");
+            ctx.font = CENTER_FONT_SIZE_AND_NAME;
+            if ( resourceStatus.name.length<9 ) {
+                const txt = sprintf.sprintf("%s(%d%%)", resourceStatus.name, values[valLen-1]);
+                ContextUtil.drawCenterText(ctx, CENTER_FONT_TEXT_HEIGHT, txt);
+            } else {
+                const percent = sprintf.sprintf("%d%%", values[valLen-1]);
+                ContextUtil.drawCenterText(ctx, CENTER_FONT_TEXT_HEIGHT, percent);
+
+                ctx.font = TOP_FONT_SIZE_AND_NAME;
+                const txt = sprintf.sprintf("%s", resourceStatus.name);
+                ContextUtil.drawHorizontalCenterText(ctx, TOP_FONT_TEXT_HEIGHT+2, txt);
+            }
         }
     }
 
