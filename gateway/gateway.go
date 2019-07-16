@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/k0kubun/go-ansi"
@@ -18,7 +19,12 @@ import (
 // ServerInfo is ServerInfo
 type ServerInfo = common.ServerInfo
 
-var serverInfoMap = make(map[string]*ServerInfo)
+type ServerInfoMap struct {
+	sync.Mutex
+	m map[string]*ServerInfo
+}
+
+var serverInfoMap = ServerInfoMap{m: make(map[string]*ServerInfo)}
 
 func sayName(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, I'm a machine and my name is [miss.lee]"))
@@ -26,9 +32,11 @@ func sayName(w http.ResponseWriter, r *http.Request) {
 
 func responseServerInfos(w http.ResponseWriter, r *http.Request) {
 	sis := []ServerInfo{}
-	for _, value := range serverInfoMap {
+	serverInfoMap.Lock()
+	for _, value := range serverInfoMap.m {
 		sis = append(sis, *value)
 	}
+	serverInfoMap.Unlock()
 
 	err := common.ResponseToJSON(w, sis)
 	if err != nil {
@@ -177,9 +185,14 @@ func (al *AnsiLine) reset() {
 	}
 }
 
+type LastServerInfoRecvTimeMap struct {
+	sync.Mutex
+	m map[string]uint64
+}
+
 var ansiLine = AnsiLine{}
 
-var lastServerInfoRecvTimeMap = map[string]uint64{}
+var lastServerInfoRecvTimeMap = LastServerInfoRecvTimeMap{m: map[string]uint64{}}
 
 var enableDisplay = false
 
@@ -199,9 +212,12 @@ func runLoop(runLoopQuitChan <-chan bool) {
 			}
 
 			// 1.서버 상태 변경
-			if len(serverInfoMap) > 0 {
-				for _, si := range serverInfoMap {
-					lastServerInfoRecvTime := lastServerInfoRecvTimeMap[si.ID]
+			serverInfoMap.Lock()
+			if len(serverInfoMap.m) > 0 {
+				for _, si := range serverInfoMap.m {
+					lastServerInfoRecvTimeMap.Lock()
+					lastServerInfoRecvTime := lastServerInfoRecvTimeMap.m[si.ID]
+					lastServerInfoRecvTimeMap.Unlock()
 					currTime := uint64(time.Now().Unix())
 					// 10분 이상 serverInfo 가 갱신이 되지 않았다면
 					// 서버와의 연결이 종료된 것으로 간주함
@@ -210,17 +226,20 @@ func runLoop(runLoopQuitChan <-chan bool) {
 					}
 				}
 			}
+			serverInfoMap.Unlock()
 
 			// 2.DISPLAY
 			if enableDisplay {
-				if len(serverInfoMap) > 0 {
-					for _, si := range serverInfoMap {
+				serverInfoMap.Lock()
+				if len(serverInfoMap.m) > 0 {
+					for _, si := range serverInfoMap.m {
 						displayStatusDetail(si)
 					}
 				} else {
 					colorstring.Fprintf(ansi.NewAnsiStdout(), "[red][bold]empty serverInfos")
 					ansi.CursorHorizontalAbsolute(0)
 				}
+				serverInfoMap.Unlock()
 			}
 
 			time.Sleep(2 * time.Second)
@@ -241,8 +260,13 @@ func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
 
 	warningIfNeeded(si)
 
-	lastServerInfoRecvTimeMap[si.ID] = uint64(time.Now().Unix())
-	serverInfoMap[si.ID] = &si
+	lastServerInfoRecvTimeMap.Lock()
+	lastServerInfoRecvTimeMap.m[si.ID] = uint64(time.Now().Unix())
+	lastServerInfoRecvTimeMap.Unlock()
+
+	serverInfoMap.Lock()
+	serverInfoMap.m[si.ID] = &si
+	serverInfoMap.Unlock()
 
 	err = common.ResponseToJSON(rw, "OK")
 	if err != nil {
