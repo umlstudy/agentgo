@@ -11,11 +11,9 @@ const mapStateToProps = (globalState: GlobalState, props:any) => {
                 ...newSi
             }
         };
-    } else {
-        return {
-            serverInfo:newSi
-        };
     }
+
+    return null;
 };
 
 export default connect(mapStateToProps)(ProcessStatusContainerView);

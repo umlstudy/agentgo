@@ -159,9 +159,23 @@ function copyOldStoreObjectAndApplyNew(oldStoreObject:StoreObject, newSi:ServerI
 }
 
 function applyRequest(state:StoreObject, action:any):StoreObject {
+    // remove 
+    const newSids = new Set<string>();
+    for ( const newSi of action.payload ) {
+        newSids.add(newSi.id);
+    }
+    for (const oldSid in state.serverInfoMap) {
+        if ( !newSids.has(oldSid) ) {
+            const removeOk = state.serverInfoMap.delete[oldSid];
+            if ( !removeOk ) {
+                console.log("remove fail " + oldSid);
+            }
+        }
+    }
+
     const storeObjects:StoreObject[] = [];
-    for ( const obj of action.payload ) {
-        storeObjects.push(copyOldStoreObjectAndApplyNew(state, obj));
+    for ( const newSi of action.payload ) {
+        storeObjects.push(copyOldStoreObjectAndApplyNew(state, newSi));
     } 
     const so = storeObjects[0];
     for ( const eleSo of storeObjects ) {

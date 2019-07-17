@@ -86,6 +86,8 @@ class SystemStausView extends React.Component<SystemStausViewLocalProps, SystemS
 
     private renderServerViews = (serverInfos: ServerInfo[]) => {
         const checkBoxClick = this.checkBoxClick.bind(this);
+        serverInfos = serverInfos.sort((a,b)=> b.sortOrder-a.sortOrder);
+        
         return (
             <>
                 <div className="SystemStatusView-header">
