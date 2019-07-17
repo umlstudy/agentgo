@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -69,15 +71,49 @@ func judgeAndSetLastResendBaseTime(lastAlarmTimesKey string, ac common.AlarmCond
 	return false
 }
 
+var smsMap common.AppConfigProperties = nil
+
+type SmsResponse struct {
+	Result string `json:"result"`
+	Type   string `json:"type"`
+	MsgId  string `json:"msgid"`
+	OkCnt  uint32 `json:"ok_cnt"`
+}
+
+func fireAlarm(msg string) error {
+	if len(msg) > 85 {
+		msg = msg[:85] // 단문 메시지 길이 제한
+	}
+	userid := smsMap["userid"]
+	callback := smsMap["callback"]
+	phone := smsMap["phone"]
+	bodyString := fmt.Sprintf("userid=%s&callback=%s&phone=%s&msg=%s", userid, callback, phone, msg)
+	byteArray := []byte(bodyString)
+	url := smsMap["url"]
+	body, _, err := common.SendBytes("POST", "application/x-www-form-urlencoded", byteArray, url)
+	if err != nil {
+		return err
+	}
+	var data SmsResponse
+	json.Unmarshal(body, &data)
+
+	if strings.Compare(data.Result, "ok") != 0 {
+		return errors.New("sms send error : " + data.Result)
+	}
+	return nil
+}
+
 func warningIfNeeded(si common.ServerInfo) {
 	var alarmMessages bytes.Buffer
+
+	alarmMessages.WriteString(fmt.Sprintf(" HOST(%s) => ", si.ID))
 
 	// 1.1
 	needAlarm := !si.IsRunning
 	if !si.IsRunning {
 		judged := judgeAndSetLastResendBaseTime("host", si.AlarmCondition)
 		if judged {
-			alarmMessages.WriteString("system died.")
+			alarmMessages.WriteString("system died")
 		}
 	}
 
@@ -86,11 +122,8 @@ func warningIfNeeded(si common.ServerInfo) {
 		as := rs.AbstractStatus
 		currNeedAlarm := warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, rs.ID))
 		needAlarm = needAlarm || currNeedAlarm
-		if as.WarningLevel == common.WARNING {
-			alarmMessages.WriteString(fmt.Sprintf(", resource warning (%s)", rs.Name))
-		}
 		if as.WarningLevel == common.ERROR {
-			alarmMessages.WriteString(fmt.Sprintf(", resource error (%s)", rs.Name))
+			alarmMessages.WriteString(fmt.Sprintf(" %s", rs.Name))
 		}
 	}
 
@@ -99,16 +132,17 @@ func warningIfNeeded(si common.ServerInfo) {
 		as := ps.AbstractStatus
 		currNeedAlarm := warningIfNeededTmp(as, fmt.Sprintf("%s-%s", si.ID, ps.ID))
 		needAlarm = needAlarm || currNeedAlarm
-		if as.WarningLevel == common.WARNING {
-			alarmMessages.WriteString(fmt.Sprintf(", resource warning (%s)", ps.Name))
-		}
 		if as.WarningLevel == common.ERROR {
-			alarmMessages.WriteString(fmt.Sprintf(", resource error (%s)", ps.Name))
+			alarmMessages.WriteString(fmt.Sprintf(" %s", ps.Name))
 		}
 	}
 
 	// 2
 	if needAlarm {
+		err := fireAlarm(alarmMessages.String())
+		if err != nil {
+			fmt.Printf("sms error occured %v\n", err)
+		}
 		// 알람 실행
 		fmt.Printf("--\n--\n--\n-- ALARM - %s\nalarm %s\n", time.Now(), alarmMessages.String())
 	}
@@ -287,6 +321,12 @@ func main() {
 	fmt.Printf("> Using port is %v\n", *port)
 	fmt.Printf("> EnableDisplay is %v\n", enableDisplay)
 	fmt.Printf("> EnableConsoleLog is %v\n", *enableConsoleLogPtr)
+
+	smsMap_, err := common.ReadPropertiesFile("sms.properties")
+	if err != nil {
+		panic(err)
+	}
+	smsMap = smsMap_
 
 	const logParam = log.Ldate | log.Ltime | log.Lshortfile
 	if !*enableConsoleLogPtr {

@@ -55,3 +55,9 @@ func ConvertObjectToJSONBytes(any interface{}) ([]byte, error) {
 
 	return jsonBytes, nil
 }
+
+func ConvertBytesToObject(buf []byte, result interface{}) error {
+	// 동작안함
+	json.Unmarshal(buf, &result)
+	return nil
+}
