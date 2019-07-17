@@ -109,10 +109,10 @@ func warningIfNeeded(si common.ServerInfo) {
 	alarmMessages.WriteString(fmt.Sprintf(" HOST(%s) => ", si.ID))
 
 	// 1.1
-	needAlarm := !si.IsRunning
+	needAlarm := false
 	if !si.IsRunning {
-		judged := judgeAndSetLastResendBaseTime("host", si.AlarmCondition)
-		if judged {
+		needAlarm := judgeAndSetLastResendBaseTime("host", si.AlarmCondition)
+		if needAlarm {
 			alarmMessages.WriteString("system died")
 		}
 	}
