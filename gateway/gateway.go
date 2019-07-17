@@ -141,9 +141,10 @@ func warningIfNeeded(si common.ServerInfo) {
 	if needAlarm {
 		err := fireAlarm(alarmMessages.String())
 		if err != nil {
-			fmt.Printf("sms error occured %v\n", err)
+			logger.Printf("sms error occured %v\n", err)
 		}
 		// 알람 실행
+		logger.Printf("--\n--\n--\n-- ALARM - %s\nalarm %s\n", time.Now(), alarmMessages.String())
 		fmt.Printf("--\n--\n--\n-- ALARM - %s\nalarm %s\n", time.Now(), alarmMessages.String())
 	}
 }
