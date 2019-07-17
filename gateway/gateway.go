@@ -259,6 +259,9 @@ func runLoop(runLoopQuitChan <-chan bool) {
 					if (currTime - lastServerInfoRecvTime) > serverJudgeDiedTime {
 						si.IsRunning = false
 					}
+
+					// 필요할 경우 통지
+					warningIfNeeded(*si)
 				}
 			}
 			serverInfoMap.Unlock()
@@ -292,8 +295,6 @@ func recvServerInfoFromAgent(rw http.ResponseWriter, req *http.Request) {
 		fmt.Printf("%v\n", err)
 		return
 	}
-
-	warningIfNeeded(si)
 
 	lastServerInfoRecvTimeMap.Lock()
 	lastServerInfoRecvTimeMap.m[si.ID] = uint64(time.Now().Unix())
